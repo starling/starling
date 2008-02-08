@@ -14,7 +14,7 @@ module StarlingServer
     def initialize
       parse_options
 
-      @process = ProcessHelper.new(options[:log_file], options[:pid_file], options[:user], options[:group])
+      @process = ProcessHelper.new(options[:logger], options[:pid_file], options[:user], options[:group])
 
       pid = @process.running?
       if pid
@@ -31,7 +31,7 @@ module StarlingServer
       self.options = { :host => '127.0.0.1',
                        :port => 22122,
                        :path => File.join(%w( / var spool starling )),
-                       :log_level => 0,
+                       :log_level => Logger::ERROR,
                        :daemonize => false,
                        :pid_file => File.join(%w( / var run starling.pid )) }
 
@@ -83,11 +83,11 @@ module StarlingServer
         opts.separator ""; opts.separator "Logging:"
 
         opts.on("-l", "--log [FILE]", "Path to print debugging information.") do |log_path|
-          options[:log] = log_path
+          options[:logger] = log_path
         end
 
-        opts.on("-v", "Increase logging verbosity.") do
-          options[:log_level] += 1
+        opts.on("-v", "Increase logging verbosity (may be used multiple times).") do
+          options[:log_level] -= 1
         end
 
         opts.separator ""; opts.separator "Miscellaneous:"
