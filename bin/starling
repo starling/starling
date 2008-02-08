@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'starling/runner'
+StarlingServer::Runner.run

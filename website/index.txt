@@ -1,0 +1,66 @@
+h1. Starling
+
+h2. What
+
+Starling is a light-weight server for distributed message passing.
+
+h2. Installing
+
+<pre syntax="ruby">sudo gem install starling</pre>
+
+h2. The basics
+
+# Start the Starling server.
+# Put messages onto a queue from a client whose work you'd like to offload to a deferred process.
+# Run a daemon process to take messages off the queue, and process as time allows.
+
+h2. Demonstration of usage
+
+# Start the Starling server:
+
+<pre>
+<code>
+    starling -h 192.168.1.1 -d
+</code>
+</pre>
+
+# Queue messages for later processing:
+
+<pre>
+<code>
+    require 'memcache'
+    starling = MemCache.new('192.168.1.1:22122')
+    starling.set('my_queue', 12345)
+</code>
+</pre>
+
+# Fetch messages from the queue and do something with them:
+
+<pre>
+<code>
+    require 'memcache'
+    starling = MemCache.new('192.168.1.1:22122')
+    loop { puts starling.get('my_queue') }
+</code>
+</pre>
+
+h2. Forum
+
+"http://groups.google.com/group/starling":http://groups.google.com/group/starling
+
+TODO - create Google Group - starling
+
+h2. How to submit patches
+
+Read the "8 steps for fixing other people's code":http://drnicwilliams.com/2007/06/01/8-steps-for-fixing-other-peoples-code/ and for section "8b: Submit patch to Google Groups":http://drnicwilliams.com/2007/06/01/8-steps-for-fixing-other-peoples-code/#8b-google-groups, use the Google Group above.
+
+The trunk repository is <code>svn://rubyforge.org/var/svn/starling/trunk</code> for anonymous access.
+
+h2. License
+
+This code is free to use under the terms of the MIT license. 
+
+h2. Contact
+
+Comments are welcome. Send an email to "FIXME full name":mailto:FIXME email via the "forum":http://groups.google.com/group/starling
+
