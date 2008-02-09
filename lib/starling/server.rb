@@ -2,6 +2,7 @@ require 'socket'
 require 'logger'
 require 'rubygems'
 require 'eventmachine'
+require 'analyzer_tools/syslog_logger'
 
 here = File.dirname(__FILE__)
 
@@ -10,7 +11,7 @@ require File.join(here, 'handler')
 
 module StarlingServer
 
-  VERSION = "0.9.5"
+  VERSION = "0.9.5.1"
 
   class Base
     attr_reader :logger
@@ -65,7 +66,7 @@ module StarlingServer
       @stats[:start_time] = Time.now
 
       @@logger = case @opts[:logger]
-      when IO, String; Logger.new(@opts[:logger])
+      when IO, String; SyslogLogger.new(@opts[:logger])
       when Logger; @opts[:logger]
       else; Logger.new(STDERR)
       end
