@@ -165,7 +165,6 @@ STAT queue_%s_expired_items %d\n".freeze
         logger.info "[loltrace] [q: #{key}] [m:get sending success] #{data.inspect}" if data.include?('loltrace')
         respond GET_RESPONSE, key, 0, data.size, data
       else
-        logger.info "[loltrace] [q: #{key}] [m:get sending failure] #{data.inspect}" if data.include?('loltrace')
         respond GET_RESPONSE_EMPTY
       end
     end
