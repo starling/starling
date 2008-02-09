@@ -127,7 +127,7 @@ module StarlingServer
     def shutdown
       begin
         STDOUT.puts "Shutting down."
-        @server.logger.info "Shutting down."
+        StarlingServer::Base.logger.info "Shutting down."
         @server.stop
       rescue Object => e
         STDERR.puts "There was an error shutting down: #{e}"

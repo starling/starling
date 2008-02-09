@@ -64,14 +64,14 @@ module StarlingServer
     def run
       @stats[:start_time] = Time.now
 
-      @logger = case @opts[:logger]
+      @@logger = case @opts[:logger]
       when IO, String; Logger.new(@opts[:logger])
       when Logger; @opts[:logger]
       else; Logger.new(STDERR)
       end
 
       @opts[:queue] = QueueCollection.new(@opts[:path])
-      @logger.level = @opts[:log_level] || Logger::ERROR
+      @@logger.level = @opts[:log_level] || Logger::ERROR
 
       EventMachine.run do
         EventMachine.epoll
@@ -80,6 +80,11 @@ module StarlingServer
       end
     end
 
+    def self.logger
+      @@logger
+    end
+
+    
     ##
     # Stop accepting new connections and shutdown gracefully.
 

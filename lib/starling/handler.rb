@@ -66,6 +66,7 @@ STAT queue_%s_expired_items %d\n".freeze
       @data = ""
       @data_buf = ""
       @server = @opts[:server]
+      @logger = StarlingServer::Base.logger
       @expiry_stats = Hash.new(0)
       @expected_length = nil
       @server.stats[:total_connections] += 1
@@ -203,7 +204,7 @@ STAT queue_%s_expired_items %d\n".freeze
     end
 
     def logger
-      @server.logger
+      @logger
     end
   end
 end

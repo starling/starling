@@ -21,6 +21,7 @@ module StarlingServer
       @shutdown_mutex = Mutex.new
 
       @path = path
+      @logger = StarlingServer::Base.logger
 
       @queues = {}
       @queue_init_mutexes = {}
@@ -39,7 +40,7 @@ module StarlingServer
       @stats[:total_items] += 1
 
       queue.push(data)
-      logger.info "[loltrace] [q: #{key}] [m:queue_push] #{data.inspect}" if data.include?('loltrace')
+      @logger.info "[loltrace] [q: #{key}] [m:queue_push] #{data.inspect}" if data.include?('loltrace')
       
       return true
     end
