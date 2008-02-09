@@ -133,13 +133,16 @@ STAT queue_%s_expired_items %d\n".freeze
     def set_data(incoming)
       key, flags, expiry = @stash
       data = incoming.slice(0...@expected_length-2)
+      logger.info "[loltrace] [q: #{key}] [m:set_data got data] #{data.inspect}" if data.include?('loltrace')
       @stash = []
       @expected_length = nil
 
       internal_data = [expiry.to_i, data].pack(DATA_PACK_FMT)
       if @queue_collection.put(key, internal_data)
+        logger.info "[loltrace] [q: #{key}] [m:set_data sending success] #{data.inspect}" if data.include?('loltrace')
         respond SET_RESPONSE_SUCCESS
       else
+        logger.info "[loltrace] [q: #{key}] [m:set_data sending failure] #{data.inspect}" if data.include?('loltrace')
         respond SET_RESPONSE_FAILURE
       end
     end
@@ -149,6 +152,7 @@ STAT queue_%s_expired_items %d\n".freeze
 
       while response = @queue_collection.take(key)
         expiry, data = response.unpack(DATA_PACK_FMT)
+        logger.info "[loltrace] [q: #{key}] [m:get got data with expiry #{expiry}] #{data.inspect}" if data.include?('loltrace')
 
         break if expiry == 0 || expiry >= now
 
@@ -157,8 +161,10 @@ STAT queue_%s_expired_items %d\n".freeze
       end
 
       if data
+        logger.info "[loltrace] [q: #{key}] [m:get sending success] #{data.inspect}" if data.include?('loltrace')
         respond GET_RESPONSE, key, 0, data.size, data
       else
+        logger.info "[loltrace] [q: #{key}] [m:get sending failure] #{data.inspect}" if data.include?('loltrace')
         respond GET_RESPONSE_EMPTY
       end
     end
