@@ -33,6 +33,7 @@ module StarlingServer
                        :path => File.join(%w( / var spool starling )),
                        :log_level => Logger::ERROR,
                        :daemonize => false,
+                       :timeout => 0,
                        :pid_file => File.join(%w( / var run starling.pid )) }
 
       OptionParser.new do |opts|
@@ -40,7 +41,7 @@ module StarlingServer
 
         opts.banner = "Starling (#{StarlingServer::VERSION})\n\n",
                       "usage: starling [-v] [-q path] [-h host] [-p port]\n",
-                      "                [-d [-P pidfile]] [-u user] [-g group] [-l log]\n",
+                      "                [-d [-P pidfile]] [-u user] [-g group] [-l log] [-t timeout]\n",
                       "       starling --help\n",
                       "       starling --version\n"
 
@@ -88,6 +89,12 @@ module StarlingServer
 
         opts.on("-v", "Increase logging verbosity (may be used multiple times).") do
           options[:log_level] -= 1
+        end
+        
+        opts.on("-t", "--timeout [SECONDS]", Integer,
+                "Time in seconds before disconnecting inactive clients (0 to disable).",
+                "(default: #{options[:timeout]})") do |timeout|
+          options[:timeout] = timeout
         end
 
         opts.separator ""; opts.separator "Miscellaneous:"
