@@ -74,7 +74,7 @@ module StarlingServer
       @opts[:queue] = QueueCollection.new(@opts[:path])
       @@logger.level = @opts[:log_level] || Logger::ERROR
 
-      @@logger.error "starling STARTUP (tampopo)"
+      @@logger.error "Starling STARTUP on #{@opts[:host]}:#{@opts[:port]}"
       
       EventMachine.run do
         EventMachine.epoll

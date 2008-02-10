@@ -49,7 +49,9 @@ STAT queue_%s_total_items %d
 STAT queue_%s_logsize %d
 STAT queue_%s_expired_items %d\n".freeze
 
-      @@cc = 0
+    
+    @@next_session_id = 1
+    
     ##
     # Creates a new handler for the MemCache protocol that communicates with a
     # given client.
@@ -72,6 +74,12 @@ STAT queue_%s_expired_items %d\n".freeze
       @server.stats[:total_connections] += 1
       set_comm_inactivity_timeout @opts[:timeout]
       @queue_collection = @opts[:queue]
+      
+      @session_id = @@next_session_id
+      @@next_session_id += 1
+      
+      peer = Socket.unpack_sockaddr_in(get_peername)
+      @logger.info "(#{@session_id}) New session from #{peer[1]}:#{peer[0]}"
     end
 
     def receive_data(incoming)
@@ -82,7 +90,6 @@ STAT queue_%s_expired_items %d\n".freeze
         response = process(data)
       end
 
-      @@cc = @@cc+1
       send_data response if response
     end
 
@@ -117,6 +124,10 @@ STAT queue_%s_expired_items %d\n".freeze
       logger.debug e.backtrace.join("\n")
       respond GET_RESPONSE_EMPTY
     end
+    
+    def unbind
+      @logger.info "(#{@session_id}) connection ends"
+    end
 
   private
     def respond(str, *args)
@@ -134,16 +145,16 @@ STAT queue_%s_expired_items %d\n".freeze
     def set_data(incoming)
       key, flags, expiry = @stash
       data = incoming.slice(0...@expected_length-2)
-      logger.info "[loltrace] [q: #{key}] [m:set_data got data] #{data.inspect}" if data.include?('loltrace')
+      logger.info "(#{@session_id}) [loltrace] [q: #{key}] [m:set_data got data] #{data.inspect}" if data.include?('loltrace')
       @stash = []
       @expected_length = nil
 
       internal_data = [expiry.to_i, data].pack(DATA_PACK_FMT)
       if @queue_collection.put(key, internal_data)
-        logger.info "[loltrace] [q: #{key}] [m:set_data sending success] #{data.inspect}" if data.include?('loltrace')
+        logger.info "(#{@session_id}) [loltrace] [q: #{key}] [m:set_data sending success] #{data.inspect}" if data.include?('loltrace')
         respond SET_RESPONSE_SUCCESS
       else
-        logger.info "[loltrace] [q: #{key}] [m:set_data sending failure] #{data.inspect}" if data.include?('loltrace')
+        logger.info "(#{@session_id}) [loltrace] [q: #{key}] [m:set_data sending failure] #{data.inspect}" if data.include?('loltrace')
         respond SET_RESPONSE_FAILURE
       end
     end
@@ -153,7 +164,7 @@ STAT queue_%s_expired_items %d\n".freeze
 
       while response = @queue_collection.take(key)
         expiry, data = response.unpack(DATA_PACK_FMT)
-        logger.info "[loltrace] [q: #{key}] [m:get got data with expiry #{expiry}] #{data.inspect}" if data.include?('loltrace')
+        logger.info "(#{@session_id}) [loltrace] [q: #{key}] [m:get got data with expiry #{expiry}] #{data.inspect}" if data.include?('loltrace')
 
         break if expiry == 0 || expiry >= now
 
@@ -162,7 +173,7 @@ STAT queue_%s_expired_items %d\n".freeze
       end
 
       if data
-        logger.info "[loltrace] [q: #{key}] [m:get sending success] #{data.inspect}" if data.include?('loltrace')
+        logger.info "(#{@session_id}) [loltrace] [q: #{key}] [m:get sending success] #{data.inspect}" if data.include?('loltrace')
         respond GET_RESPONSE, key, 0, data.size, data
       else
         respond GET_RESPONSE_EMPTY
