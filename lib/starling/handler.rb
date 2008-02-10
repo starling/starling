@@ -79,7 +79,7 @@ STAT queue_%s_expired_items %d\n".freeze
       @@next_session_id += 1
       
       peer = Socket.unpack_sockaddr_in(get_peername)
-      @logger.info "(#{@session_id}) New session from #{peer[1]}:#{peer[0]}"
+      #@logger.debug "(#{@session_id}) New session from #{peer[1]}:#{peer[0]}"
     end
 
     def receive_data(incoming)
@@ -126,7 +126,7 @@ STAT queue_%s_expired_items %d\n".freeze
     end
     
     def unbind
-      @logger.info "(#{@session_id}) connection ends"
+      #@logger.debug "(#{@session_id}) connection ends"
     end
 
   private
