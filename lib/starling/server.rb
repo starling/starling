@@ -66,10 +66,11 @@ module StarlingServer
       @stats[:start_time] = Time.now
 
       @@logger = case @opts[:logger]
-      when IO, String; SyslogLogger.new(@opts[:logger])
+      when IO, String; Logger.new(@opts[:logger])
       when Logger; @opts[:logger]
       else; Logger.new(STDERR)
       end
+      @@logger = SyslogLogger.new(@opts[:syslog_channel]) if @opts[:syslog_channel]
 
       @opts[:queue] = QueueCollection.new(@opts[:path])
       @@logger.level = @opts[:log_level] || Logger::ERROR

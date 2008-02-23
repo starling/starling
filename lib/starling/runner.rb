@@ -1,5 +1,6 @@
 require File.join(File.dirname(__FILE__), 'server')
 require 'optparse'
+require 'yaml'
 
 module StarlingServer
   class Runner
@@ -27,6 +28,21 @@ module StarlingServer
       start
     end
 
+    def load_config_file(filename)
+      YAML.load(File.open(filename))['starling'].each do |key, value|
+        # alias some keys
+        case key
+        when "queue_path" then key = "path"
+        when "log_file" then key = "logger"
+        end
+        options[key.to_sym] = value
+        
+        if options[:log_level].instance_of?(String)
+          options[:log_level] = Logger.const_get(options[:log_level])
+        end
+      end
+    end
+    
     def parse_options
       self.options = { :host => '127.0.0.1',
                        :port => 22122,
@@ -40,13 +56,18 @@ module StarlingServer
         opts.summary_width = 25
 
         opts.banner = "Starling (#{StarlingServer::VERSION})\n\n",
-                      "usage: starling [-v] [-q path] [-h host] [-p port]\n",
-                      "                [-d [-P pidfile]] [-u user] [-g group] [-l log] [-t timeout]\n",
+                      "usage: starling [options...]\n",
                       "       starling --help\n",
                       "       starling --version\n"
 
         opts.separator ""
         opts.separator "Configuration:"
+        
+        opts.on("-f", "--config FILENAME",
+                "Config file (yaml) to load") do |filename|
+          load_config_file(filename)
+        end
+
         opts.on("-q", "--queue_path PATH",
                 :REQUIRED,
                 "Path to store Starling queue logs", "(default: #{options[:path]})") do |queue_path|
@@ -69,7 +90,7 @@ module StarlingServer
           options[:daemonize] = true
         end
 
-        opts.on("-PFILE", "--pid FILE", "save PID in FILE when using -d option.", "(default: #{options[:pid_file]})") do |pid_file|
+        opts.on("-PFILE", "--pid FILENAME", "save PID in FILENAME when using -d option.", "(default: #{options[:pid_file]})") do |pid_file|
           options[:pid_file] = pid_file
         end
 
@@ -85,6 +106,10 @@ module StarlingServer
 
         opts.on("-l", "--log [FILE]", "Path to print debugging information.") do |log_path|
           options[:logger] = log_path
+        end
+        
+        opts.on("--syslog CHANNEL", "Write logs to the syslog instead of a log file.") do |channel|
+          options[:syslog_channel] = channel
         end
 
         opts.on("-v", "Increase logging verbosity (may be used multiple times).") do
