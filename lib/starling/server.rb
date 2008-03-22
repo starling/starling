@@ -77,9 +77,9 @@ module StarlingServer
 
       @@logger.error "Starling STARTUP on #{@opts[:host]}:#{@opts[:port]}"
       
+      EventMachine.epoll
+      EventMachine.set_descriptor_table_size(4096)
       EventMachine.run do
-        EventMachine.epoll
-        EventMachine.set_descriptor_table_size(4096)
         EventMachine.start_server(@opts[:host], @opts[:port], Handler, @opts)
       end
     end
