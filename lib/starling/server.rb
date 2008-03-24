@@ -82,6 +82,9 @@ module StarlingServer
       EventMachine.run do
         EventMachine.start_server(@opts[:host], @opts[:port], Handler, @opts)
       end
+
+      # code here will get executed on shutdown:
+      @opts[:queue].close
     end
 
     def self.logger
@@ -93,7 +96,6 @@ module StarlingServer
     # Stop accepting new connections and shutdown gracefully.
 
     def stop
-      @opts[:queue].close
       EventMachine.stop_event_loop
     end
 

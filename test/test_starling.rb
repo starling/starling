@@ -14,15 +14,36 @@ end
 class TestStarling < Test::Unit::TestCase
 
   def setup
-    @server, @acceptor = StarlingServer::Base.start(:host => '127.0.0.1',
-                                                    :port => 22133,
-                                                    :path => tmp_path)
+    begin
+      Dir::mkdir(tmp_path)
+    rescue Errno::EEXIST
+    end
+
+    # anti-race juice:
+    blocking = true
+    Signal.trap("USR1") { blocking = false }
+    
+    @server_pid = Process.fork do
+      server = StarlingServer::Base.new(:host => '127.0.0.1',
+                                        :port => 22133,
+                                        :path => tmp_path,
+                                        :logger => Logger.new(STDERR),
+                                        :log_level => Logger::FATAL)
+      Signal.trap("INT") { server.stop }
+      Process.kill("USR1", Process.ppid)
+      server.run
+    end
+    
+    while blocking
+      sleep 0.1
+    end
 
     @client = MemCache.new('127.0.0.1:22133')
   end
 
   def teardown
-    @server.stop
+    Process.kill("INT", @server_pid)
+    Process.wait(@server_pid)
     @client.reset
     FileUtils.rm_f(File.join(tmp_path, '*'))
     sleep 0.01
@@ -102,6 +123,7 @@ class TestStarling < Test::Unit::TestCase
     @client.reset
     assert_equal v, @client.get('test_that_disconnecting_and_reconnecting_works')
   end
+  
 
   private
 
