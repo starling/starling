@@ -40,7 +40,6 @@ module StarlingServer
       @stats[:total_items] += 1
 
       queue.push(data)
-      @logger.info "[loltrace] [q: #{key}] [m:queue_push] #{data.inspect}" if data.include?('loltrace')
       
       return true
     end
