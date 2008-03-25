@@ -104,11 +104,11 @@ module StarlingServer
 
         opts.separator ""; opts.separator "Logging:"
 
-        opts.on("-l", "--log [FILE]", "Path to print debugging information.") do |log_path|
+        opts.on("-L", "--log [FILE]", "Path to print debugging information.") do |log_path|
           options[:logger] = log_path
         end
         
-        opts.on("--syslog CHANNEL", "Write logs to the syslog instead of a log file.") do |channel|
+        opts.on("-l", "--syslog CHANNEL", "Write logs to the syslog instead of a log file.") do |channel|
           options[:syslog_channel] = channel
         end
 
