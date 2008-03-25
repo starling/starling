@@ -11,6 +11,21 @@ class StarlingServer::PersistentQueue
   SOFT_LOG_MAX_SIZE = 16 * 1024 # 16 KB
 end
 
+def safely_fork(&block)
+  # anti-race juice:
+  blocking = true
+  Signal.trap("USR1") { blocking = false }
+  
+  pid = Process.fork(&block)
+  
+  while blocking
+    sleep 0.1
+  end
+  
+  pid
+end
+
+
 class TestStarling < Test::Unit::TestCase
 
   def setup
@@ -19,11 +34,7 @@ class TestStarling < Test::Unit::TestCase
     rescue Errno::EEXIST
     end
 
-    # anti-race juice:
-    blocking = true
-    Signal.trap("USR1") { blocking = false }
-    
-    @server_pid = Process.fork do
+    @server_pid = safely_fork do
       server = StarlingServer::Base.new(:host => '127.0.0.1',
                                         :port => 22133,
                                         :path => tmp_path,
@@ -33,10 +44,6 @@ class TestStarling < Test::Unit::TestCase
       Process.kill("USR1", Process.ppid)
       server.run
     end
-    
-    while blocking
-      sleep 0.1
-    end
 
     @client = MemCache.new('127.0.0.1:22133')
   end
@@ -45,8 +52,7 @@ class TestStarling < Test::Unit::TestCase
     Process.kill("INT", @server_pid)
     Process.wait(@server_pid)
     @client.reset
-    FileUtils.rm_f(File.join(tmp_path, '*'))
-    sleep 0.01
+    FileUtils.rm(Dir.glob(File.join(tmp_path, '*')))
   end
   
   def test_temporary_path_exists_and_is_writable
@@ -68,7 +74,7 @@ class TestStarling < Test::Unit::TestCase
     now = Time.now.to_i
     @client.set('test_set_with_expiry', v + 2, now)
     @client.set('test_set_with_expiry', v)
-    sleep(now + 1 - Time.now.to_f)
+    sleep(1.0)
     assert_equal v, @client.get('test_set_with_expiry')
   end
 
@@ -122,6 +128,52 @@ class TestStarling < Test::Unit::TestCase
     @client.set('test_that_disconnecting_and_reconnecting_works', v)
     @client.reset
     assert_equal v, @client.get('test_that_disconnecting_and_reconnecting_works')
+  end
+  
+  def test_epoll
+    # this may take a few seconds.
+    # the point is to make sure that we're using epoll on Linux, so we can
+    # handle more than 1024 connections.
+    
+    unless IO::popen("uname").read.chomp == "Linux"
+      puts "(Skipping epoll test: not on Linux)"
+      return
+    end
+    fd_limit = IO::popen("bash -c 'ulimit -n'").read.chomp.to_i
+    unless fd_limit > 1024
+      puts "(Skipping epoll test: 'ulimit -n' = #{fd_limit}, need > 1024)"
+      return
+    end
+    
+    v = rand(2**32 - 1)
+    @client.set('test_epoll', v)
+
+    # we can't open 1024 connections to memcache from within this process,
+    # because we will hit ruby's 1024 fd limit ourselves!
+    pid1 = safely_fork do
+      unused_sockets = []
+      600.times do
+        unused_sockets << TCPSocket.new("127.0.0.1", 22133)
+      end
+      Process.kill("USR1", Process.ppid)
+      sleep 90
+    end
+    pid2 = safely_fork do
+      unused_sockets = []
+      600.times do
+        unused_sockets << TCPSocket.new("127.0.0.1", 22133)
+      end
+      Process.kill("USR1", Process.ppid)
+      sleep 90
+    end
+    
+    begin
+      client = MemCache.new('127.0.0.1:22133')
+      assert_equal v, client.get('test_epoll')
+    ensure
+      Process.kill("TERM", pid1)
+      Process.kill("TERM", pid2)
+    end
   end
   
 
