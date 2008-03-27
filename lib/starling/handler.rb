@@ -162,10 +162,6 @@ STAT queue_%s_expired_items %d\n".freeze
       while response = @queue_collection.take(key)
         expiry, data = response.unpack(DATA_PACK_FMT)
 
-        if expiry.nil? 
-          logger.info "[CRAZY!] [q: #{key}] [m:get got data with *NO* EXPIRY #{expiry.inspect}] #{data.inspect}"
-        end
-
         break if expiry == 0 || expiry >= now
 
         @expiry_stats[key] += 1
