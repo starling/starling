@@ -94,8 +94,10 @@ module StarlingServer
 
     def rotate_log #:nodoc:
       @trx.close
-      File.rename(log_path, "#{log_path}.#{Time.now.to_i}")
+      backup_logfile = "#{log_path}.#{Time.now.to_i}"
+      File.rename(log_path, backup_logfile)
       reopen_log
+      File.unlink(backup_logfile)
     end
 
     def replay_transaction_log(debug) #:nodoc:

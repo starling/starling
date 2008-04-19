@@ -98,7 +98,8 @@ class TestStarling < Test::Unit::TestCase
     assert_equal v, @client.get('test_log_rotation')
 
     assert_equal 1, File.size(log_rotation_path)
-    assert_equal 2, Dir.glob("#{log_rotation_path}*").size
+    # rotated log should be erased after a successful roll.
+    assert_equal 1, Dir.glob("#{log_rotation_path}*").size
   end
 
   def test_stats
