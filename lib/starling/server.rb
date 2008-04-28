@@ -75,7 +75,7 @@ module StarlingServer
       @opts[:queue] = QueueCollection.new(@opts[:path])
       @@logger.level = @opts[:log_level] || Logger::ERROR
 
-      @@logger.error "Starling STARTUP on #{@opts[:host]}:#{@opts[:port]}"
+      @@logger.info "Starling STARTUP on #{@opts[:host]}:#{@opts[:port]}"
       
       EventMachine.epoll
       EventMachine.set_descriptor_table_size(4096)
