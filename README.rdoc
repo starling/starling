@@ -2,7 +2,14 @@
 
 Starling - a light weight server for reliable distributed message passing.
 
-= Synopsis
+= Description
+
+Starling is a powerful but simple messaging server that enables reliable
+distributed queuing with an absolutely minimal overhead. It speaks the
+MemCache protocol for maximum cross-platform compatibility. Any language
+that speaks MemCache can take advantage of Starling's queue facilities.
+
+= Usage
 
   # Start the Starling server as a daemonized process:
   starling -h 192.168.1.1 -d
@@ -19,13 +26,6 @@ Starling - a light weight server for reliable distributed message passing.
 
   # See the Starling documentation for more information.
 
-= Description
-
-Starling is a powerful but simple messaging server that enables reliable 
-distributed queuing with an absolutely minimal overhead. It speaks the
-MemCache protocol for maximum cross-platform compatibility. Any language
-that speaks MemCache can take advantage of Starling's queue facilities.
-
 = Known Issues
 
 * Starling is "slow" as far as messaging systems are concerned. In practice,
@@ -34,10 +34,10 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 = Authors
 
 Blaine Cook <romeda@gmail.com>
+AnotherBritt
 
 = Copyright
 
 Starling - a light-weight server for reliable distributed message passing.
 Copyright 2007 Blaine Cook <blaine@twitter.com>, Twitter Inc.
 
-<<to be completed>>

@@ -1,4 +1,3 @@
-
 starling:
   port: 22122
   pid_file: /tmp/starling.pid
