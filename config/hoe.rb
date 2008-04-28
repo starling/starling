@@ -35,7 +35,7 @@ VERS = StarlingServer::VERSION + (REV ? ".#{REV}" : "")
 RDOC_OPTS = ['--quiet', '--title', 'starling documentation',
     "--opname", "index.html",
     "--line-numbers", 
-    "--main", "README",
+    "--main", "README.rdoc",
     "--inline-source"]
 
 class Hoe
