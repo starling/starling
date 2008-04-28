@@ -35,7 +35,7 @@ module StarlingServer
     #   [:loglevel] Logger verbosity. Default is Logger::ERROR.
     #
     # Other options are ignored.
-    
+
     def self.start(opts = {})
       server = self.new(opts)
       server.run
@@ -46,9 +46,9 @@ module StarlingServer
     # process requests.
     #
     # +opts+ is as for +start+
-    
+
     def initialize(opts = {})
-      @opts = { 
+      @opts = {
         :host    => DEFAULT_HOST,
         :port    => DEFAULT_PORT,
         :path    => DEFAULT_PATH,
@@ -57,6 +57,9 @@ module StarlingServer
       }.merge(opts)
 
       @stats = Hash.new(0)
+
+      FileUtils.mkdir_p(@opts[:path])
+
     end
 
     ##
@@ -66,17 +69,17 @@ module StarlingServer
       @stats[:start_time] = Time.now
 
       @@logger = case @opts[:logger]
-      when IO, String; Logger.new(@opts[:logger])
-      when Logger; @opts[:logger]
-      else; Logger.new(STDERR)
-      end
+                 when IO, String; Logger.new(@opts[:logger])
+                 when Logger; @opts[:logger]
+                 else; Logger.new(STDERR)
+                 end
       @@logger = SyslogLogger.new(@opts[:syslog_channel]) if @opts[:syslog_channel]
 
       @opts[:queue] = QueueCollection.new(@opts[:path])
       @@logger.level = @opts[:log_level] || Logger::ERROR
 
       @@logger.info "Starling STARTUP on #{@opts[:host]}:#{@opts[:port]}"
-      
+
       EventMachine.epoll
       EventMachine.set_descriptor_table_size(4096)
       EventMachine.run do
@@ -91,7 +94,7 @@ module StarlingServer
       @@logger
     end
 
-    
+
     ##
     # Stop accepting new connections and shutdown gracefully.
 

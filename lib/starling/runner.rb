@@ -46,11 +46,11 @@ module StarlingServer
     def parse_options
       self.options = { :host => '127.0.0.1',
                        :port => 22122,
-                       :path => File.join(%w( / var spool starling )),
-                       :log_level => Logger::ERROR,
+                       :path => File.join(%w( / tmp starling spool )),
+                       :log_level => Logger::INFO,
                        :daemonize => false,
                        :timeout => 0,
-                       :pid_file => File.join(%w( / var run starling.pid )) }
+                       :pid_file => File.join(%w( / tmp starling starling.pid )) }
 
       OptionParser.new do |opts|
         opts.summary_width = 25
@@ -257,6 +257,7 @@ module StarlingServer
 
     def write_pid_file
       return unless @pid_file
+      FileUtils.mkdir_p(File.dirname(@pid_file))
       File.open(@pid_file, "w") { |f| f.write(Process.pid) }
       File.chmod(0644, @pid_file)
     end
