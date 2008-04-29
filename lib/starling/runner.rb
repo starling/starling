@@ -11,7 +11,7 @@ module StarlingServer
     def self.run
       new
     end
-   
+
     def initialize
       parse_options
 
@@ -36,13 +36,13 @@ module StarlingServer
         when "log_file" then key = "logger"
         end
         options[key.to_sym] = value
-        
+
         if options[:log_level].instance_of?(String)
           options[:log_level] = Logger.const_get(options[:log_level])
         end
       end
     end
-    
+
     def parse_options
       self.options = { :host => '127.0.0.1',
                        :port => 22122,
@@ -62,7 +62,7 @@ module StarlingServer
 
         opts.separator ""
         opts.separator "Configuration:"
-        
+
         opts.on("-f", "--config FILENAME",
                 "Config file (yaml) to load") do |filename|
           load_config_file(filename)
@@ -107,7 +107,7 @@ module StarlingServer
         opts.on("-L", "--log [FILE]", "Path to print debugging information.") do |log_path|
           options[:logger] = log_path
         end
-        
+
         opts.on("-l", "--syslog CHANNEL", "Write logs to the syslog instead of a log file.") do |channel|
           options[:syslog_channel] = channel
         end
@@ -115,7 +115,7 @@ module StarlingServer
         opts.on("-v", "Increase logging verbosity (may be used multiple times).") do
           options[:log_level] -= 1
         end
-        
+
         opts.on("-t", "--timeout [SECONDS]", Integer,
                 "Time in seconds before disconnecting inactive clients (0 to disable).",
                 "(default: #{options[:timeout]})") do |timeout|
@@ -229,7 +229,7 @@ module StarlingServer
         end
       end
     end
-    
+
     def redirect_io
       begin; STDIN.reopen('/dev/null'); rescue Exception; end
 
@@ -238,7 +238,7 @@ module StarlingServer
           STDOUT.reopen(@log_file, "a")
           STDOUT.sync = true
         rescue Exception
-          begin; STDOUT.reopen('/dev/null'); rescue Exception; end 
+          begin; STDOUT.reopen('/dev/null'); rescue Exception; end
         end
       else
         begin; STDOUT.reopen('/dev/null'); rescue Exception; end

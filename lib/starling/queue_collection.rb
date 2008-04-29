@@ -7,12 +7,12 @@ module StarlingServer
 
   ##
   # QueueCollection is a proxy to a collection of PersistentQueue instances.
-  
+
   class QueueCollection
 
     ##
     # Create a new QueueCollection at +path+
-    
+
     def initialize(path)
       unless File.directory?(path) && File.writable?(path)
         raise InaccessibleQueuePath.new(path)
@@ -40,7 +40,7 @@ module StarlingServer
       @stats[:total_items] += 1
 
       queue.push(data)
-      
+
       return true
     end
 
@@ -61,7 +61,7 @@ module StarlingServer
     end
 
     ##
-    # Returns all active queues. 
+    # Returns all active queues.
 
     def queues(key=nil)
       return nil if @shutdown_mutex.locked?

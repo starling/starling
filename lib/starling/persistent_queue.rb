@@ -27,7 +27,7 @@ module StarlingServer
     # Create a new PersistentQueue at +persistence_path+/+queue_name+.
     # If a queue log exists at that path, the Queue will be loaded from
     # disk before being available for use.
-    
+
     def initialize(persistence_path, queue_name, debug = false)
       @persistence_path = persistence_path
       @queue_name = queue_name
@@ -53,10 +53,10 @@ module StarlingServer
 
     ##
     # Retrieves data from the queue.
-    
+
     def pop(log_trx = true)
       raise NoTransactionLog if log_trx && !@trx
-      
+
       begin
         rv = super(!log_trx)
       rescue ThreadError
@@ -69,7 +69,7 @@ module StarlingServer
 
     ##
     # Safely closes the transactional queue.
-    
+
     def close
       # Ok, yeah, this is lame, and is *technically* a race condition. HOWEVER,
       # the QueueCollection *should* have stopped processing requests, and I don't

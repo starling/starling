@@ -15,13 +15,13 @@ def safely_fork(&block)
   # anti-race juice:
   blocking = true
   Signal.trap("USR1") { blocking = false }
-  
+
   pid = Process.fork(&block)
-  
+
   while blocking
     sleep 0.1
   end
-  
+
   pid
 end
 
@@ -54,7 +54,7 @@ class TestStarling < Test::Unit::TestCase
     @client.reset
     FileUtils.rm(Dir.glob(File.join(tmp_path, '*')))
   end
-  
+
   def test_temporary_path_exists_and_is_writable
     assert File.exist?(tmp_path)
     assert File.directory?(tmp_path)
@@ -106,9 +106,9 @@ class TestStarling < Test::Unit::TestCase
     stats = @client.stats
     assert_kind_of Hash, stats
     assert stats.has_key?('127.0.0.1:22133')
-    
+
     server_stats = stats['127.0.0.1:22133']
-    
+
     basic_stats = %w( bytes pid time limit_maxbytes cmd_get version
                       bytes_written cmd_set get_misses total_connections
                       curr_connections curr_items uptime get_hits total_items
@@ -130,12 +130,12 @@ class TestStarling < Test::Unit::TestCase
     @client.reset
     assert_equal v, @client.get('test_that_disconnecting_and_reconnecting_works')
   end
-  
+
   def test_epoll
     # this may take a few seconds.
     # the point is to make sure that we're using epoll on Linux, so we can
     # handle more than 1024 connections.
-    
+
     unless IO::popen("uname").read.chomp == "Linux"
       puts "(Skipping epoll test: not on Linux)"
       return
@@ -145,7 +145,7 @@ class TestStarling < Test::Unit::TestCase
       puts "(Skipping epoll test: 'ulimit -n' = #{fd_limit}, need > 1024)"
       return
     end
-    
+
     v = rand(2**32 - 1)
     @client.set('test_epoll', v)
 
@@ -167,7 +167,7 @@ class TestStarling < Test::Unit::TestCase
       Process.kill("USR1", Process.ppid)
       sleep 90
     end
-    
+
     begin
       client = MemCache.new('127.0.0.1:22133')
       assert_equal v, client.get('test_epoll')
@@ -176,7 +176,7 @@ class TestStarling < Test::Unit::TestCase
       Process.kill("TERM", pid2)
     end
   end
-  
+
 
   private
 

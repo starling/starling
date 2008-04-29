@@ -6,7 +6,7 @@ class Starling < MemCache
 
   ##
   # fetch an item from a queue.
-  
+
   def get(*args)
     loop do
       response = super(*args)
@@ -16,13 +16,13 @@ class Starling < MemCache
   end
 
   ##
-  # insert +value+ into +queue+. 
+  # insert +value+ into +queue+.
   #
   # +expiry+ is expressed as a UNIX timestamp
-  # 
+  #
   # If +raw+ is true, +value+ will not be Marshalled. If +raw+ = :yaml, +value+
   # will be serialized with YAML, instead.
-  
+
   def set(queue, value, expiry = 0, raw = false)
     retries = 0
     begin
