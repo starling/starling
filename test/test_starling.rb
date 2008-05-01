@@ -85,7 +85,6 @@ class TestStarling < Test::Unit::TestCase
     assert_equal 'nibbler', @client.get('test_age')
 
     stats = @client.stats['127.0.0.1:22133']
-    puts stats.inspect
     assert stats.has_key?('queue_test_age_age')
     assert stats['queue_test_age_age'] >= 1000
   end
