@@ -11,8 +11,13 @@ module StarlingServer
     def self.run
       new
     end
+    
+    def self.shutdown
+      @@instance.shutdown
+    end
    
     def initialize
+      @@instance = self
       parse_options
 
       @process = ProcessHelper.new(options[:logger], options[:pid_file], options[:user], options[:group])

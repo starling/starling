@@ -22,6 +22,7 @@ module StarlingServer
     attr_reader :initial_bytes
     attr_reader :total_items
     attr_reader :logsize
+    attr_reader :current_age
 
     ##
     # Create a new PersistentQueue at +persistence_path+/+queue_name+.
@@ -34,6 +35,7 @@ module StarlingServer
       @total_items = 0
       super()
       @initial_bytes = replay_transaction_log(debug)
+      @current_age = 0
     end
 
     ##
@@ -48,7 +50,7 @@ module StarlingServer
       end
 
       @total_items += 1
-      super(value)
+      super([now_usec, value])
     end
 
     ##
@@ -61,10 +63,11 @@ module StarlingServer
         rv = super(!log_trx)
       rescue ThreadError
         puts "WARNING: The queue was empty when trying to pop(). Technically this shouldn't ever happen. Probably a bug in the transactional underpinnings. Or maybe shutdown didn't happen cleanly at some point. Ignoring."
-        rv = ''
+        rv = [now_usec, '']
       end
       transaction "\001" if log_trx
-      rv
+      @current_age = (now_usec - rv[0]) / 1000
+      rv[1]
     end
 
     ##
@@ -138,6 +141,11 @@ module StarlingServer
       @trx.write_nonblock data
       @logsize += data.size
       rotate_log if @logsize > SOFT_LOG_MAX_SIZE && self.length == 0
+    end
+    
+    def now_usec
+      now = Time.now
+      now.to_i * 1000000 + now.usec
     end
   end
 end

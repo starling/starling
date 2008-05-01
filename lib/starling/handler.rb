@@ -47,7 +47,10 @@ STAT limit_maxbytes %d
     QUEUE_STATS_RESPONSE = "STAT queue_%s_items %d
 STAT queue_%s_total_items %d
 STAT queue_%s_logsize %d
-STAT queue_%s_expired_items %d\n".freeze
+STAT queue_%s_expired_items %d
+STAT queue_%s_age %d\n".freeze
+
+    SHUTDOWN_COMMAND = /\Ashutdown\r\n/m
 
     
     @@next_session_id = 1
@@ -115,6 +118,9 @@ STAT queue_%s_expired_items %d\n".freeze
         get($1)
       when STATS_COMMAND
         stats
+      when SHUTDOWN_COMMAND
+        # no point in responding, they'll never get it.
+        Runner::shutdown
       else
         logger.warn "Unknown command: #{data}."
         respond ERR_UNKNOWN_COMMAND
@@ -204,7 +210,8 @@ STAT queue_%s_expired_items %d\n".freeze
                       k, v.length,
                       k, v.total_items,
                       k, v.logsize,
-                      k, @expiry_stats[k])
+                      k, @expiry_stats[k],
+                      k, v.current_age)
       end
     end
 
