@@ -78,6 +78,18 @@ class TestStarling < Test::Unit::TestCase
     assert_equal v, @client.get('test_set_with_expiry')
   end
 
+  def test_age
+    now = Time.now.to_i
+    @client.set('test_age', 'nibbler')
+    sleep(1.0)
+    assert_equal 'nibbler', @client.get('test_age')
+
+    stats = @client.stats['127.0.0.1:22133']
+    puts stats.inspect
+    assert stats.has_key?('queue_test_age_age')
+    assert stats['queue_test_age_age'] >= 1000
+  end
+  
   def test_log_rotation
     log_rotation_path = File.join(tmp_path, 'test_log_rotation')
 
