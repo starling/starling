@@ -1,3 +1,5 @@
+$SAFE = 3
+
 GEM       = "starling"
 VER       = "0.9.5.4"
 AUTHORS    = ["Blaine Cook", "anotherbritt"]
@@ -28,6 +30,5 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "LICENSE"]
 
   s.add_dependency 'memcache-client'
-  s.add_dependency 'rails_analyzer_tools'
 end
 
