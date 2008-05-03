@@ -4,7 +4,7 @@ module StarlingServer
   # This is an internal class that's used by Starling::Server to handle the
   # MemCache protocol and act as an interface between the Server and the
   # QueueCollection.
-  
+
   class Handler < EventMachine::Connection
 
     DATA_PACK_FMT = "Ia*".freeze
@@ -52,9 +52,9 @@ STAT queue_%s_age %d\n".freeze
 
     SHUTDOWN_COMMAND = /\Ashutdown\r\n/m
 
-    
+
     @@next_session_id = 1
-    
+
     ##
     # Creates a new handler for the MemCache protocol that communicates with a
     # given client.
@@ -77,10 +77,10 @@ STAT queue_%s_age %d\n".freeze
       @server.stats[:total_connections] += 1
       set_comm_inactivity_timeout @opts[:timeout]
       @queue_collection = @opts[:queue]
-      
+
       @session_id = @@next_session_id
       @@next_session_id += 1
-      
+
       peer = Socket.unpack_sockaddr_in(get_peername)
       #@logger.debug "(#{@session_id}) New session from #{peer[1]}:#{peer[0]}"
     end
@@ -98,7 +98,7 @@ STAT queue_%s_age %d\n".freeze
 
     def process(data)
       data = @data_buf + data if @data_buf.size > 0
-      # our only non-normal state is consuming an object's data 
+      # our only non-normal state is consuming an object's data
       # when @expected_length is present
       if @expected_length && data.size == @expected_length
         response = set_data(data)
@@ -130,7 +130,7 @@ STAT queue_%s_age %d\n".freeze
       logger.debug e.backtrace.join("\n")
       respond GET_RESPONSE_EMPTY
     end
-    
+
     def unbind
       #@logger.debug "(#{@session_id}) connection ends"
     end
@@ -182,7 +182,7 @@ STAT queue_%s_age %d\n".freeze
     end
 
     def stats
-      respond STATS_RESPONSE, 
+      respond STATS_RESPONSE,
         Process.pid, # pid
         Time.now - @server.stats(:start_time), # uptime
         Time.now.to_i, # time

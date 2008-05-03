@@ -1,0 +1,85 @@
+= Name
+
+Starling - a light weight server for reliable distributed message passing.
+
+
+= Description
+
+Starling is a powerful but simple messaging server that enables reliable
+distributed queuing with an absolutely minimal overhead. It speaks the
+MemCache protocol for maximum cross-platform compatibility. Any language
+that speaks MemCache can take advantage of Starling's queue facilities.
+
+
+= Installation
+
+  This fork of the Starling source is hosted at GitHub and can be found at:
+
+  http://github.com/anotherbritt/starling/tree/master
+
+  The original source was to be found at RubyForge but no longer exists there.
+
+  GitHub serves gems prefixed by a username to differentiate different forks.
+  This project can be installed with:
+
+  # THIS COMMAND ONE TIME ONLY
+  gem sources -a http://gems.github.com/
+
+  # As often as you like
+  sudo gem install anotherbritt-starling
+
+  See http://gems.github.com/ if you want more info about GitHub and gems.
+
+= Quick Start Usage
+
+  # View the Starling help and usage message
+  starling --help
+
+  # In a console window start the Starling server.  By default
+  # it runs verbosely in the foreground, listening on 127.0.0.1:22122
+  # and stores its files under /tmp/starling:
+  starling
+
+  # In a new console test the put and get of messages on a queue:
+
+  ~/src/git/starling (master)\ > irb
+  >> require 'memcache'
+  => true
+  >> starling = MemCache.new('127.0.0.1:22122')
+  => MemCache: 1 servers, 1 buckets, ns: nil, ro: false
+  >> starling.set('my_queue', 12345)
+  => nil
+  >> starling.get('my_queue')
+  => 12345
+
+  # You can do a simple loop over a queue with something like:
+  >> loop { puts starling.get('my_queue'); sleep 1 }
+  12345
+  nil
+  nil
+  ...
+
+  For more information run the following in a new console:
+  'gem server'
+
+  This will start a gem server on http://localhost:8808/ which you can view in your
+  browser to see the RDocs for the gem.
+
+
+= Known Issues
+
+* Starling is "slow" as far as messaging systems are concerned. In practice,
+  it's fast enough.
+
+
+= Authors
+
+Blaine Cook <romeda@gmail.com>
+AnotherBritt
+
+
+= Copyright
+
+Starling - a light-weight server for reliable distributed message passing.
+Copyright 2007 Blaine Cook <blaine@twitter.com>, Twitter Inc.
+

@@ -15,3 +15,4 @@ class TestQueueCollection < Test::Unit::TestCase
     }
   end
 end
+

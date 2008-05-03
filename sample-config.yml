@@ -1,8 +1,7 @@
-
 starling:
   port: 22122
-  pid_file: /tmp/starling.pid
-  queue_path: /tmp
+  pid_file: /tmp/starling/starling.pid
+  queue_path: /tmp/starling/spool
   timeout: 0
   syslog_channel: starling-tampopo
   log_level: DEBUG
