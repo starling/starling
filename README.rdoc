@@ -66,7 +66,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
   browser to see the RDocs for the gem. Or generate rdocs by running the following
   in a new console:
 	
-	'rdoc'
+  'rdoc'
 
 = Known Issues
 
