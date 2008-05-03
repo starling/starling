@@ -42,9 +42,9 @@ that speaks MemCache can take advantage of Starling's queue facilities.
   # In a new console test the put and get of messages on a queue:
 
   irb
-  >> require 'memcache'
+  >> require 'starling'
   => true
-  >> starling = MemCache.new('127.0.0.1:22122')
+  >> starling = Starling.new('127.0.0.1:22122')
   => MemCache: 1 servers, 1 buckets, ns: nil, ro: false
   >> starling.set('my_queue', 12345)
   => nil
@@ -71,6 +71,10 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 * Starling is "slow" as far as messaging systems are concerned. In practice,
   it's fast enough.
 
+== TODO
+
+* Implement memcached in stead of memcache as a client interface
+* Add a worker/client framework that polls and processes messages in starling
 
 = Authors
 
