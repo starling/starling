@@ -74,11 +74,11 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 
 = Authors
 
-Blaine Cook <romeda@gmail.com>
-Chris Wanstrath <chris@ozmm.org>
-AnotherBritt <?>
-Glenn Rempe <?>
-Abdul-Rahman Advany <abdulrahman@advany.com>
+* Blaine Cook <romeda@gmail.com>
+* Chris Wanstrath <chris@ozmm.org>
+* AnotherBritt <?>
+* Glenn Rempe <?>
+* Abdul-Rahman Advany <abdulrahman@advany.com>
 
 = Copyright
 
