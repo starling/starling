@@ -2,7 +2,6 @@
 
 Starling - a light weight server for reliable distributed message passing.
 
-
 = Description
 
 Starling is a powerful but simple messaging server that enables reliable
@@ -15,7 +14,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 
   This fork of the Starling source is hosted at GitHub and can be found at:
 
-  http://github.com/anotherbritt/starling/tree/master
+  http://github.com/advany/starling/tree/master
 
   The original source was to be found at RubyForge but no longer exists there.
 
@@ -26,7 +25,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
   gem sources -a http://gems.github.com/
 
   # As often as you like
-  sudo gem install anotherbritt-starling
+  sudo gem install advany-starling
 
   See http://gems.github.com/ if you want more info about GitHub and gems.
 
@@ -42,7 +41,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 
   # In a new console test the put and get of messages on a queue:
 
-  ~/src/git/starling (master)\ > irb
+  irb
   >> require 'memcache'
   => true
   >> starling = MemCache.new('127.0.0.1:22122')
@@ -65,6 +64,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
   This will start a gem server on http://localhost:8808/ which you can view in your
   browser to see the RDocs for the gem.
 
+	or generate your rdoc's
 
 = Known Issues
 
@@ -75,11 +75,12 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 = Authors
 
 Blaine Cook <romeda@gmail.com>
-AnotherBritt
-
+Chris Wanstrath <chris@ozmm.org>
+AnotherBritt <?>
+Glenn Rempe <?>
+Abdul-Rahman Advany <abdulrahman@advany.com>
 
 = Copyright
 
 Starling - a light-weight server for reliable distributed message passing.
-Copyright 2007 Blaine Cook <blaine@twitter.com>, Twitter Inc.
-
+Copyright 2007-2008 Blaine Cook <blaine@twitter.com>, Twitter Inc.

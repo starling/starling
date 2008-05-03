@@ -1,9 +1,19 @@
+== 0.9.7 2008-05-03
+* merged branch of AnotherBritt and Glenn Rempe by Abdul-Rahman Advany <abdulrahman@advany.com>
+
+==  0.9.6 2008-04-30
+* logging of message lifecycle as :age by AnotherBritt <?>
+* added some extra logging options by AnotherBritt <?>
+* added some test for epoll by AnotherBritt <?>
+
 == 0.9.5.4 2008-04-28
 
-* Bumped version number
-* Purged all old RubyForge config.  Now GitHub friendly
-* New gemspec for GitHub gem auto-build-serve
-* Changes contributed by Glenn Rempe <glenn.rempe@gmail.com>
+* Bumped version number by Glenn Rempe <glenn.rempe@gmail.com>
+* Purged all old RubyForge config.  Now GitHub friendly by Glenn Rempe <glenn.rempe@gmail.com>
+* New gemspec for GitHub gem auto-build-serve by Glenn Rempe <glenn.rempe@gmail.com>
+
+== 0.9.4 2008-01-31 ==
+* Evented code added using EventMachine by Chris Wanstrath <chris@ozmm.org>
 
 == 2007-11-02
 
