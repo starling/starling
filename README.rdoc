@@ -59,13 +59,14 @@ that speaks MemCache can take advantage of Starling's queue facilities.
   ...
 
   For more information run the following in a new console:
+  
   'gem server'
 
   This will start a gem server on http://localhost:8808/ which you can view in your
   browser to see the RDocs for the gem. Or generate rdocs by running the following
   in a new console:
 	
-		'rdoc'
+	'rdoc'
 
 = Known Issues
 
