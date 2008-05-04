@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'starling'
+require 'starling/worker'
 require 'logger'
 require 'eventmachine'
 require 'analyzer_tools/syslog_logger'
@@ -57,7 +58,7 @@ module StarlingClient
       FileUtils.mkdir_p(@opts[:templates_path])
       FileUtils.mkdir_p(@opts[:workers_path])
       
-      @client = Starling.new("#{@opts[:host]}:#{@opts[:port]}")
+      @client = Starling.new("#{@opts[:host]}:#{@opts[:port]}", :multithread => true)
     end
 
     ##

@@ -52,3 +52,11 @@ class ThreadPool
   end
   
 end
+
+class Runnable
+  attr_accessor :args, :block
+  def initialize( args, &block )
+    @args = args
+    @block = block
+  end
+end
