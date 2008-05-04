@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'server')
+require File.join(File.dirname(__FILE__), 'client')
 require 'optparse'
 require 'yaml'
 
@@ -51,6 +51,8 @@ module StarlingClient
     def parse_options
       self.options = { :path => File.join(%w( / tmp workers )),
                        :log_level => Logger::INFO,
+                       :workers_path => File.join(%w( / tmp starling workers )),
+                       :templates_path => File.join(%w( / tmp starling templates )),
                        :daemonize => false,
                        :timeout => 0,
                        :pid_file => File.join(%w( / tmp starling starling_client.pid )) }
@@ -69,6 +71,18 @@ module StarlingClient
         opts.on("-f", "--config FILENAME",
                 "Config file (yaml) to load") do |filename|
           load_config_file(filename)
+        end
+        
+        opts.on("-w", "--workers_path PATH",
+                :REQUIRED,
+                "Path to workers", "(default: #{options[:path]})") do |queue_path|
+          options[:workers_path] = queue_path
+        end
+        
+        opts.on("-t", "--templates_path PATH",
+                :REQUIRED,
+                "Path to templates", "(default: #{options[:path]})") do |queue_path|
+          options[:templates_path] = queue_path
         end
 
         opts.separator ""; opts.separator "Process:"
@@ -93,12 +107,6 @@ module StarlingClient
 
         opts.on("-v", "Increase logging verbosity (may be used multiple times).") do
           options[:log_level] -= 1
-        end
-
-        opts.on("-t", "--timeout [SECONDS]", Integer,
-                "Time in seconds before disconnecting inactive clients (0 to disable).",
-                "(default: #{options[:timeout]})") do |timeout|
-          options[:timeout] = timeout
         end
 
         opts.separator ""; opts.separator "Miscellaneous:"

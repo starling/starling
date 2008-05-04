@@ -16,13 +16,13 @@ def gemspec
     s.description = s.summary
 
     s.require_path = 'lib'
-    s.executables = ["starling"]
+    s.executables = ["starling", "starling_client"]
 
     # get this easily and accurately by running 'Dir.glob("{lib,test}/**/*")'
     # in an IRB session.  However, GitHub won't allow that command hence
     # we spell it out.
-    s.files = ["README.rdoc", "LICENSE", "CHANGELOG", "Rakefile", "lib/starling", "lib/starling/handler.rb", "lib/starling/persistent_queue.rb", "lib/starling/queue_collection.rb", "lib/starling/server_runner.rb", "lib/starling/server.rb", "lib/starling.rb", "test/test_starling_server.rb"]
-    s.test_files = ["test/test_starling_server.rb"]
+    s.files = ["README.rdoc", "LICENSE", "CHANGELOG", "Rakefile", "lib/starling", "lib/starling/handler.rb", "lib/starling/persistent_queue.rb", "lib/starling/queue_collection.rb", "lib/starling/server_runner.rb", "lib/starling/server.rb", "lib/starling/client_runner.rb", "lib/starling/client.rb", "lib/starling/worker.rb", "lib/starling/thread_pool.rb", "lib/starling.rb", "test/test_starling_server.rb", "test/test_starling_client.rb", "test/test_starling_worker.rb"]
+    s.test_files = ["test/test_starling_server.rb", "test/test_starling_client.rb", "test/test_starling_worker.rb"]
 
     s.has_rdoc = true
     s.rdoc_options = ["--quiet", "--title", "starling documentation", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source"]

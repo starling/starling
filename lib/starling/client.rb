@@ -14,8 +14,8 @@ module StarlingClient
 
     DEFAULT_HOST            = "localhost"
     DEFAULT_PORT            = "22122"
-    DEFAULT_TEMPLATES_PATH  = File.join(File.dirname(__FILE__), "templates")
-    DEFAULT_WORKERS_PATH     = File.join(File.dirname(__FILE__), "workers")
+    DEFAULT_TEMPLATES_PATH  = File.join("tmp", "starling", "templates")
+    DEFAULT_WORKERS_PATH    = File.join("tmp", "starling", "workers")
     DEFAULT_TIMEOUT         = 60
 
     ##
@@ -78,9 +78,31 @@ module StarlingClient
 
       @@logger.info "Starling Client STARTUP"
       
-      load_worker_templates
+      load_templates
       
-      load_workers
+      pids = []
+      
+      load_workers.each do |worker|
+        if @opts[:daemonize]
+          pids << fork {
+            worker = StarlingWorker.const_get(worker).new(:host => @opts[:host],
+                                                          :port => @opts[:port],
+                                                          :continues_processing => false).run
+          }
+        else
+          worker = StarlingWorker.const_get(worker).new(:host => @opts[:host],
+                                                        :port => @opts[:port],
+                                                        :continues_processing => false).run
+        end
+      end
+      
+      if @opts[:daemonize]
+        Thread.close
+        
+        pids.each do |pid|
+          Process.kill(pid)
+        end
+      end
     end
     
     def load_templates

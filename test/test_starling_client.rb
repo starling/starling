@@ -86,6 +86,12 @@ describe "StarlingServer" do
     @client.starling.should_not == nil
   end
   
+  it "should run" do
+    @client.starling.set("get_data_from_some_api_out", "test")
+    @client.starling.set("gettingdata_out", "test")
+    @client.run
+  end
+  
   after do
     Process.kill("INT", @server_pid)
     Process.wait(@server_pid)

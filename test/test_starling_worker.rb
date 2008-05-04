@@ -61,7 +61,9 @@ describe "StarlingWorker" do
     
     @worker = StarlingWorker::Base.new(:host => '127.0.0.1',
                                        :port => 22133,
-                                       :continues_processing => false)
+                                       :continues_processing => false,
+                                       :incoming_remote_queue_name => "worker_messages_coming_in",
+                                       :outgoing_remote_queue_name => "worker_messages_going_out")
                                        
     @starling = @client.starling
   end
@@ -84,8 +86,8 @@ describe "StarlingWorker" do
   end
   
   it "should have a remote queue name" do
-    @worker.incoming_remote_queue_name.should eql("starling_worker_base_in")
-    @worker.outgoing_remote_queue_name.should eql("starling_worker_base_out")
+    @worker.incoming_remote_queue_name.should eql("worker_messages_coming_in")
+    @worker.outgoing_remote_queue_name.should eql("worker_messages_going_out")
   end
   
   it "should have threadpool size" do
@@ -110,7 +112,7 @@ describe "StarlingWorker" do
   end
   
   it "should process message with block and add to local queue" do
-    @worker.process_message("test") do |message|
+    @worker.process_as_thread("test") do |message|
       message.should eql("test")
       message
     end
@@ -155,12 +157,76 @@ describe "StarlingWorker" do
     @worker.get_message_from_local_queue.should eql("test")
   end
   
-  it "should run worker that implemented process" do
-    @worker.add_message_to_incoming_remote_queue("**")
+  it "should run workers that implemented process" do
+
     worker = StarlingWorker::Gettingdata.new(:host => '127.0.0.1',
                                              :port => 22133,
-                                             :continues_processing => false)
+                                             :continues_processing => false,
+                                             :incoming_remote_queue_name => "worker_messages_coming_in",
+                                             :outgoing_remote_queue_name => "worker_messages_going_out")
+                                              
+    worker.add_message_to_incoming_remote_queue("**")
     worker.run
+    
+
+    worker = StarlingWorker::GetDataFromSomeApi.new(:host => '127.0.0.1',
+                                                    :port => 22133,
+                                                    :continues_processing => false,
+                                                    :incoming_remote_queue_name => "worker_messages_coming_in",
+                                                    :outgoing_remote_queue_name => "worker_messages_going_out")
+                                                    
+    worker.add_message_to_incoming_remote_queue("**")
+    worker.run
+  end
+  
+  it "should run without incoming queue" do
+    worker = StarlingWorker::Base.new(:host => '127.0.0.1',
+                                      :port => 22133,
+                                      :continues_processing => false,
+                                      :outgoing_remote_queue_name => "worker_messages_going_test_out")
+    
+    worker.process do
+      "test"
+    end
+
+    worker.run
+
+    @starling.sizeof(worker.incoming_remote_queue_name).should eql(0)
+    @starling.sizeof(worker.outgoing_remote_queue_name).should eql(1)
+  end
+  
+  it "should run without outgoing queue" do
+    worker = StarlingWorker::Base.new(:host => '127.0.0.1',
+                                      :port => 22133,
+                                      :continues_processing => false,
+                                      :incoming_remote_queue_name => "worker_messages_incoming_test_in")
+    
+    worker.process do |message|
+      message.should eql("**")
+      message
+    end
+    
+    worker.add_message_to_incoming_remote_queue("**")
+
+    worker.run
+
+    @starling.sizeof(worker.local_queue.length).should eql(0)
+    @starling.sizeof(worker.outgoing_remote_queue_name).should eql(0)
+  end
+  
+  it "should run without incoming and outgoing queue" do
+    worker = StarlingWorker::Base.new(:host => '127.0.0.1',
+                                      :port => 22133,
+                                      :continues_processing => false)
+    
+    worker.process do
+      sleep 0.01
+    end
+
+    worker.run
+
+    @starling.sizeof(worker.local_queue.length).should eql(0)
+    @starling.sizeof(worker.outgoing_remote_queue_name).should eql(0)
   end
   
   after do

@@ -11,8 +11,6 @@ module StarlingWorker
     VERSION = "0.0.1"
     
     DEFAULT_TIMEOUT     = 10
-    DEFAULT_REMOTE_INCOMING_QUEUE_NAME  = "#{name.gsub(/::/, '_').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase}_in" #tablize it
-    DEFAULT_REMOTE_OUTGOING_QUEUE_NAME  = "#{name.gsub(/::/, '_').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase}_out" #tablize it
     DEFAULT_CONTINUES_PROCESSING = true
 
     # you just need to reimplement this
@@ -31,8 +29,8 @@ module StarlingWorker
     def initialize(opts = {})
       @opts = {
         :timeout => DEFAULT_TIMEOUT,
-        :incoming_remote_queue_name => DEFAULT_REMOTE_INCOMING_QUEUE_NAME,
-        :outgoing_remote_queue_name => DEFAULT_REMOTE_OUTGOING_QUEUE_NAME, 
+        :incoming_remote_queue_name => nil,
+        :outgoing_remote_queue_name => nil,
         :continues_processing => DEFAULT_CONTINUES_PROCESSING
       }.merge(opts)
       
@@ -51,7 +49,7 @@ module StarlingWorker
       unless @opts[:host] && @opts[:port]
         raise "you need to pass starling host en port"
       else
-        @starling = Starling.new("localhost:22133", :multithread => true)
+        @starling = Starling.new("#{@opts[:host]}:#{@opts[:port]}", :multithread => true)
       end
       
       @threadpool = ThreadPool.new(10)
@@ -80,18 +78,20 @@ module StarlingWorker
         else
           process_message_from_local_queue_to_outgoing_remote_queue
         end
-      end
+      end if @opts[:outgoing_remote_queue_name]
       
-      deq_thread.join unless @opts[:continues_processing]
+      deq_thread.join unless @opts[:continues_processing] || @opts[:outgoing_remote_queue_name] == nil
     end
     
     def process_message_from_incoming_remote_queue(&block)
       begin
-        starling = Starling.new("#{@opts[:host]}:#{@opts[:port]}", :multithread => true) unless starling
-
-        message = from_remote_queue_to_process(starling)
-
-        process_message(message, &block)
+        if @opts[:incoming_remote_queue_name]
+          starling = Starling.new("#{@opts[:host]}:#{@opts[:port]}", :multithread => true) unless starling
+          message = from_remote_queue_to_process(starling)
+          process_as_thread(message, &block)
+        else
+          process_as_thread(&block) # just process without message
+        end
       rescue Exception => e
         puts "--- process_worker ---"
         puts e
@@ -113,7 +113,7 @@ module StarlingWorker
       end
     end
     
-    def process_message(message, &block)
+    def process_as_thread(message=nil, &block)
       @threadpool.add_work do
         timeout(@opts[:timeout]) do
           if block
@@ -126,19 +126,23 @@ module StarlingWorker
     end
     
     def from_remote_queue_to_process(starling=@starling)
-      message = get_message_from_incoming_remote_queue(starling)
+      if @opts[:incoming_remote_queue_name]
+        message = get_message_from_incoming_remote_queue(starling)
       
-      message
+        message
+      end
     end
     
     def from_process_to_local_queue(message)
-      add_message_to_local_queue(message)
+      add_message_to_local_queue(message) if @opts[:outgoing_remote_queue_name]
     end
     
     def from_local_queue_to_remote_queue(starling=@starling)
-      message = get_message_from_local_queue
+      if @opts[:outgoing_remote_queue_name]
+        message = get_message_from_local_queue
       
-      starling.set(@opts[:outgoing_remote_queue_name], message)
+        starling.set(@opts[:outgoing_remote_queue_name], message)
+      end
     end
     
     def threadpool
