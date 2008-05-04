@@ -28,7 +28,7 @@ end
 
 describe "StarlingServer" do
   before do
-    @tmp_path = File.join(File.dirname(__FILE__), "..", "tmp")
+    @tmp_path = File.join(File.dirname(__FILE__), "tmp")
     
     begin
       Dir::mkdir(@tmp_path)
