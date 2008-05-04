@@ -3,7 +3,7 @@ class ThreadPool
 
   # 1. Initialize with arbitrary number of threads 
   def initialize( threads_number = 1, &exception_handler )
-    @work_queue = Queue.new
+    @work_queue = SizedQueue.new(threads_number)
     @worker_threads = ThreadGroup.new
 
     # Create all threads in advance: that's the thread pool after all

@@ -51,8 +51,6 @@ module StarlingClient
     def parse_options
       self.options = { :path => File.join(%w( / tmp workers )),
                        :log_level => Logger::INFO,
-                       :workers_path => File.join(%w( / tmp starling workers )),
-                       :templates_path => File.join(%w( / tmp starling templates )),
                        :daemonize => false,
                        :timeout => 0,
                        :pid_file => File.join(%w( / tmp starling starling_client.pid )) }
@@ -75,13 +73,13 @@ module StarlingClient
         
         opts.on("-w", "--workers_path PATH",
                 :REQUIRED,
-                "Path to workers", "(default: #{options[:path]})") do |queue_path|
+                "Path to workers") do |queue_path|
           options[:workers_path] = queue_path
         end
         
         opts.on("-t", "--templates_path PATH",
                 :REQUIRED,
-                "Path to templates", "(default: #{options[:path]})") do |queue_path|
+                "Path to templates") do |queue_path|
           options[:templates_path] = queue_path
         end
 
@@ -146,8 +144,8 @@ module StarlingClient
     def shutdown
       begin
         STDOUT.puts "Shutting down."
-        StarlingServer::Base.logger.info "Shutting down."
-        @server.stop
+        StarlingClient::Base.logger.info "Shutting down."
+        @client.stop
       rescue Object => e
         STDERR.puts "There was an error shutting down: #{e}"
         exit(70)

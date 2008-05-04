@@ -79,7 +79,7 @@ describe "StarlingServer" do
   end
   
   it "should load workers" do
-    @client.load_workers.should eql(["GetDataFromSomeApi", "Gettingdata"])
+    @client.load_workers.should eql(["GetDataFromSomeApi", "PushDataToSomeApi"])
   end
   
   it "should return Starling" do

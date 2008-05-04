@@ -7,9 +7,9 @@ require 'starling/thread_pool'
 module StarlingWorker
   attr_reader :logger
   
-  class Base
-    VERSION = "0.0.1"
-    
+  VERSION = "0.9.7.5"
+  
+  class Base    
     DEFAULT_TIMEOUT     = 10
     DEFAULT_CONTINUES_PROCESSING = true
 
@@ -31,7 +31,9 @@ module StarlingWorker
         :timeout => DEFAULT_TIMEOUT,
         :incoming_remote_queue_name => nil,
         :outgoing_remote_queue_name => nil,
-        :continues_processing => DEFAULT_CONTINUES_PROCESSING
+        :continues_processing => DEFAULT_CONTINUES_PROCESSING,
+        :threads => 10,
+        :log_level => Logger::INFO
       }.merge(opts)
       
       @@logger = case @opts[:logger]
@@ -44,21 +46,25 @@ module StarlingWorker
 
       @@logger.level = @opts[:log_level] || Logger::ERROR
 
-      @@logger.info "StarlingWorker::Base STARTUP"
+      @@logger.info "StarlingWorker#{self.class.to_s} STARTUP"
       
       unless @opts[:host] && @opts[:port]
         raise "you need to pass starling host en port"
       else
+        @@logger.info "StarlingWorker#{self.class.to_s} connecting to starling"
         @starling = Starling.new("#{@opts[:host]}:#{@opts[:port]}", :multithread => true)
       end
       
-      @threadpool = ThreadPool.new(10)
+      @@logger.info "StarlingWorker#{self.class.to_s} ThreadPool #{@opts[:threads]}"
+      @threadpool = ThreadPool.new(@opts[:threads])
       
+      @@logger.info "StarlingWorker#{self.class.to_s} Created local queue"
       @messages = Queue.new #local queue
     end
     
     def process_worker(&block)
       enq_thread = Thread.new do
+        @@logger.info "StarlingWorker#{self.class.to_s} starting process_message_from_remote_queue"
         if @opts[:continues_processing]
           while @opts[:continues_processing]
             process_message_from_incoming_remote_queue(&block)
@@ -71,6 +77,7 @@ module StarlingWorker
       enq_thread.join unless @opts[:continues_processing]
       
       deq_thread = Thread.new do
+        @@logger.info "StarlingWorker#{self.class.to_s} starting process_message_from_local_queue_to_outgoing_remote_queue"
         if @opts[:continues_processing]
           while @opts[:continues_processing]
             process_message_from_local_queue_to_outgoing_remote_queue
@@ -81,6 +88,11 @@ module StarlingWorker
       end if @opts[:outgoing_remote_queue_name]
       
       deq_thread.join unless @opts[:continues_processing] || @opts[:outgoing_remote_queue_name] == nil
+      
+      if @opts[:continues_processing]
+        enq_thread.join
+        deq_thread.join unless @opts[:outgoing_remote_queue_name] == nil
+      end
     end
     
     def process_message_from_incoming_remote_queue(&block)
@@ -88,8 +100,14 @@ module StarlingWorker
         if @opts[:incoming_remote_queue_name]
           starling = Starling.new("#{@opts[:host]}:#{@opts[:port]}", :multithread => true) unless starling
           message = from_remote_queue_to_process(starling)
+          while message == nil
+            sleep 0.25
+            message = from_remote_queue_to_process(starling)
+          end
+          @@logger.info "StarlingWorker#{self.class.to_s} processing message (#{message})"
           process_as_thread(message, &block)
         else
+          @@logger.info "StarlingWorker#{self.class.to_s} processing without message (#{message})"
           process_as_thread(&block) # just process without message
         end
       rescue Exception => e
@@ -117,9 +135,21 @@ module StarlingWorker
       @threadpool.add_work do
         timeout(@opts[:timeout]) do
           if block
-            from_process_to_local_queue block.call(message)
+            if message
+              @@logger.info "StarlingWorker#{self.class.to_s} processing block message (#{message})"
+              from_process_to_local_queue block.call(message)
+            else
+              @@logger.info "StarlingWorker#{self.class.to_s} processing block without message (#{message})"
+              from_process_to_local_queue block.call
+            end
           else
-            from_process_to_local_queue process(message)
+            if message
+              @@logger.info "StarlingWorker#{self.class.to_s} processing method message (#{message})"
+              from_process_to_local_queue process(message)
+            else
+              @@logger.info "StarlingWorker#{self.class.to_s} processing method without message (#{message})"
+              from_process_to_local_queue process
+            end
           end
         end
       end
@@ -128,19 +158,29 @@ module StarlingWorker
     def from_remote_queue_to_process(starling=@starling)
       if @opts[:incoming_remote_queue_name]
         message = get_message_from_incoming_remote_queue(starling)
+        
+        while message == nil
+          sleep 0.25
+          message = get_message_from_incoming_remote_queue(starling)
+        end
+        
+        @@logger.info "StarlingWorker#{self.class.to_s} return remote message to process (#{message})"
       
         message
       end
     end
     
     def from_process_to_local_queue(message)
+      @@logger.info "StarlingWorker#{self.class.to_s} add message to local queue (#{message})" if @opts[:outgoing_remote_queue_name]
       add_message_to_local_queue(message) if @opts[:outgoing_remote_queue_name]
     end
     
     def from_local_queue_to_remote_queue(starling=@starling)
       if @opts[:outgoing_remote_queue_name]
         message = get_message_from_local_queue
-      
+        
+        @@logger.info "StarlingWorker::#{self.class.to_s} set message on remote queue (#{message})"
+        
         starling.set(@opts[:outgoing_remote_queue_name], message)
       end
     end

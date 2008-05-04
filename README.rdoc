@@ -76,7 +76,8 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 == TODO
 
 * Implement memcached in stead of memcache as a client interface
-* Add a worker/client framework that polls and processes messages in starling
+* Improve client structure (with workers - simplify and add defaults)
+* Fix running starling_client as deamonized process (can't seem to fork inside a fork)
 
 = Authors
 

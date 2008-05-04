@@ -7,7 +7,7 @@ require 'analyzer_tools/syslog_logger'
 
 module StarlingClient
 
-  VERSION = "0.0.1"
+  VERSION = "0.9.7.5"
   
   class Base
     attr_reader :logger
@@ -50,7 +50,7 @@ module StarlingClient
         :templates_path => DEFAULT_TEMPLATES_PATH,
         :workers_path   => DEFAULT_WORKERS_PATH,
         :timeout        => DEFAULT_TIMEOUT,
-        :server         => self
+        :continues_processing => true
       }.merge(opts)
 
       @stats = Hash.new(0)
@@ -80,29 +80,32 @@ module StarlingClient
       
       load_templates
       
-      pids = []
+      @pids = []
       
       load_workers.each do |worker|
-        if @opts[:daemonize]
-          pids << fork {
-            worker = StarlingWorker.const_get(worker).new(:host => @opts[:host],
-                                                          :port => @opts[:port],
-                                                          :continues_processing => false).run
-          }
-        else
+        @pids << fork {
           worker = StarlingWorker.const_get(worker).new(:host => @opts[:host],
-                                                        :port => @opts[:port],
-                                                        :continues_processing => false).run
-        end
+                                                        :port => @opts[:port]).run
+          @@logger.info "Starling Client STARTUP"
+        }
       end
       
-      if @opts[:daemonize]
-        Thread.close
-        
-        pids.each do |pid|
-          Process.kill(pid)
-        end
+      if load_workers.length == 0
+        @@logger.error "no workers found"
+        @shutdown = true
       end
+      
+      loop {
+        sleep 60
+      } if @opts[:continues_processing]
+    end
+    
+    def stop
+      @pids.each do |pid|
+        Process.kill(0, pid)
+      end
+      
+      exit(0)
     end
     
     def load_templates

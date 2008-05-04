@@ -159,7 +159,7 @@ describe "StarlingWorker" do
   
   it "should run workers that implemented process" do
 
-    worker = StarlingWorker::Gettingdata.new(:host => '127.0.0.1',
+    worker = StarlingWorker::PushDataToSomeApi.new(:host => '127.0.0.1',
                                              :port => 22133,
                                              :continues_processing => false,
                                              :incoming_remote_queue_name => "worker_messages_coming_in",
