@@ -1,17 +1,10 @@
-GEM       = "starling"
-VER       = "0.9.7.5"
-AUTHORS    = ["Blaine Cook", "Chris Wanstrath", "anotherbritt", "Glenn Rempe", "Abdul-Rahman Advany"]
-EMAILS     = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com"]
-HOMEPAGE  = "http://github.com/advany/starling/"
-SUMMARY   = "Starling is a lightweight, transactional, distributed queue server"
-
-spec = Gem::Specification.new do |s|
-	s.name = GEM
-	s.version = VER
-	s.authors = AUTHORS
-	s.email = EMAILS
-	s.homepage = HOMEPAGE
-	s.summary = SUMMARY
+Gem::Specification.new do |s|
+	s.name = "starling"
+	s.version = "0.9.7.5"
+	s.authors = ["Blaine Cook", "Chris Wanstrath", "anotherbritt", "Glenn Rempe", "Abdul-Rahman Advany"]
+	s.email = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com"]
+	s.homepage = "http://github.com/fiveruns/starling/"
+	s.summary = "Starling is a lightweight, transactional, distributed queue server"
 	s.description = s.summary
 
 	s.require_path = 'lib'
