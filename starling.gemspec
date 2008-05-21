@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
 	s.rdoc_options = ["--quiet", "--title", "starling documentation", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source"]
 	s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "LICENSE"]
 
-	s.add_dependency 'memcache-client'
+	s.add_dependency 'fiveruns-memcache-client'
 end
