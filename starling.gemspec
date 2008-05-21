@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
 	s.description = s.summary
 
 	s.require_path = 'lib'
-	s.executables = ["starling", "starling_client"]
+	s.executables = ["starling", "starling_client", "starling_top"]
 
 	# get this easily and accurately by running 'Dir.glob("{lib,test}/**/*")'
 	# in an IRB session.  However, GitHub won't allow that command hence
