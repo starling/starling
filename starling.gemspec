@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
 	s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "LICENSE"]
 
 	s.add_dependency 'fiveruns-memcache-client'
+	s.add_dependency 'SyslogLogger'
 end
