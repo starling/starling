@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
 
 	s.add_dependency 'fiveruns-memcache-client'
 	s.add_dependency 'SyslogLogger'
+	s.add_dependency 'eventmachine'
 end
