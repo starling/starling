@@ -1,91 +1,71 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          starling
-# Required-Start:    $local_fs $remote_fs
-# Required-Stop:     $local_fs $remote_fs
-# Default-Start:     2 3 4 5
-# Default-Stop:      S 0 1 6
+# Provides: starling
+# Required-Start: $local_fs $remote_fs
+# Required-Stop: $local_fs $remote_fs
+# Default-Start: 2 3 4 5
+# Default-Stop: S 0 1 6
 # Short-Description: Starling queue server
-# Description:       The Starling distributed, transactional queue server
+# Description: The Starling distributed, transactional queue server
 ### END INIT INFO
-# Author:       Twitter
-# Version:      0.9.7.5
+# Author: Twitter
+# Version: 0.9.7.5
 
 set -e
 
+DUSER=starling
+DGROUP=starling
+LOGFILE=/var/log/starling/starling.log
+SPOOLDIR=/var/spool/starling
+PORT=22122
+LISTEN=0.0.0.0
+PIDFILE=/var/run/starling/starling.pid
+
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DESC="Starling"
 NAME=starling
-INSTALL_DIR=/usr/bin
+DESC="Starling"
+INSTALL_DIR=/usr/local/bin
 DAEMON=$INSTALL_DIR/$NAME
-PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
+OPTS="-h $LISTEN -p $PORT -d -q $SPOOLDIR -P $PIDFILE -L $LOGFILE"
+
+. /lib/lsb/init-functions
+
 
 # Gracefully exit if the package has been removed.
 test -x $DAEMON || exit 0
 
 d_start() {
-	start-stop-daemon -c nobody:nobody --start --quiet --chdir $INSTALL_DIR --make-pidfile --pidfile $PIDFILE \
-		--background --exec $DAEMON \
-		|| echo -n " already running"
+	log_begin_msg "Starting Starling Server..."
+		start-stop-daemon -c $DUSER:$DGROUP --start --quiet --pidfile $PIDFILE --exec $DAEMON \
+		-- $OPTS || log_end_msg 1
+		log_end_msg 0
 }
 
 d_stop() {
-	start-stop-daemon -c nobody:nobody --stop --quiet --pidfile $PIDFILE \
-		--name $NAME \
-		|| echo -n " not running"
-}
-
-d_reload() {
-	start-stop-daemon -c nobody:nobody --stop --quiet --pidfile $PIDFILE \
-		--name $NAME --signal 1
+	log_begin_msg "Stopping Starling Server..."
+		start-stop-daemon -c $DUSER:$DGROUP --stop --quiet --pidfile $PIDFILE \
+		|| log_end_msg 1
+		log_end_msg 0
 }
 
 case "$1" in
-  start)
-	echo -n "Starting $DESC: $NAME"
-	d_start
-	echo "."
-	;;
-  stop)
-	echo -n "Stopping $DESC: $NAME"
-	d_stop
-	echo "."
-	;;
-  #reload)
-	#
-	#	If the daemon can reload its configuration without
-	#	restarting (for example, when it is sent a SIGHUP),
-	#	then implement that here.
-	#
-	#	If the daemon responds to changes in its config file
-	#	directly anyway, make this an "exit 0".
-	#
-	# echo -n "Reloading $DESC configuration..."
-	# d_reload
-	# echo "done."
-  #;;
-  restart|force-reload)
-	#
-	#	If the "reload" option is implemented, move the "force-reload"
-	#	option to the "reload" entry above. If not, "force-reload" is
-	#	just the same as "restart".
-	#
-	echo -n "Restarting $DESC: $NAME"
-	d_stop
-	# One second might not be time enough for a daemon to stop, 
-	# if this happens, d_start will fail (and dpkg will break if 
-	# the package is being upgraded). Change the timeout if needed
-	# be, or change d_stop to have start-stop-daemon use --retry. 
-	# Notice that using --retry slows down the shutdown process somewhat.
-	sleep 1
-	d_start
-	echo "."
-	;;
-  *)
-	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
-	exit 3
-	;;
+start)
+d_start
+;;
+stop)
+d_stop
+;;
+restart|force-reload|reload)
+d_stop
+sleep 2
+d_start
+;;
+*)
+echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
+exit 3
+;;
 esac
 
 exit 0
+
