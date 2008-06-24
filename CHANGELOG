@@ -1,11 +1,15 @@
+== 0.9.7.6 2008-05-04
+* removed client code (will be added to different project) by Abdul-Rahman Advany <abdulrahman@advany.com>
+
 == 0.9.7.5 2008-05-04
-* added worker class, using starling client you can now run them in background
+* added worker class, using starling client you can now run them in background by Abdul-Rahman Advany <abdulrahman@advany.com>
  - handles creation of threadpool
  - handles fetching of messages and passing these to the threads
  - handles pushing of processed messages to starling again if needed
 
 == 0.9.7 2008-05-03
 * merged branch of AnotherBritt and Glenn Rempe by Abdul-Rahman Advany <abdulrahman@advany.com>
+* rspeced tests by Abdul-Rahman Advany <abdulrahman@advany.com>
 
 ==  0.9.6 2008-04-30
 * logging of message lifecycle as :age by AnotherBritt <?>

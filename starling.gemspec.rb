@@ -1,5 +1,5 @@
 GEM       = "starling"
-VER       = "0.9.5"
+VER       = "0.9.7.6"
 AUTHORS    = ["Blaine Cook", "Chris Wanstrath", "anotherbritt", "Glenn Rempe", "Abdul-Rahman Advany"]
 EMAILS     = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com"]
 HOMEPAGE  = "http://github.com/advany/starling/"
