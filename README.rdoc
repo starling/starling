@@ -9,12 +9,11 @@ distributed queuing with an absolutely minimal overhead. It speaks the
 MemCache protocol for maximum cross-platform compatibility. Any language
 that speaks MemCache can take advantage of Starling's queue facilities.
 
-
 = Installation
 
   This fork of the Starling source is hosted at GitHub and can be found at:
 
-  http://github.com/advany/starling/tree/master
+  http://github.com/starling/starling/tree/master
 
   The original source was to be found at RubyForge but no longer exists there.
 
@@ -25,7 +24,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
   gem sources -a http://gems.github.com/
 
   # As often as you like
-  sudo gem install advany-starling
+  sudo gem install starling-starling
 
   See http://gems.github.com/ if you want more info about GitHub and gems.
 
@@ -68,6 +67,22 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 	
   'rdoc'
 
+= Using fiveruns memcache-client
+
+	memcache-client from fiveruns has a couple of fixed added like supporting failover and retry on failure.
+	
+	This fork of the memcache-client source is hosted at GitHub and can be found at:
+
+  http://github.com/fiveruns/memcache-client/tree/master
+
+  It can be installed using:
+
+  # THIS COMMAND ONE TIME ONLY
+  gem sources -a http://gems.github.com/
+
+  # As often as you like
+  sudo gem install fiveruns-memcache-client
+
 = Known Issues
 
 * Starling is "slow" as far as messaging systems are concerned. In practice,
@@ -75,9 +90,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 
 == TODO
 
-* Implement memcached in stead of memcache as a client interface
-* Improve client structure (with workers - simplify and add defaults)
-* Fix running starling_client as deamonized process (can't seem to fork inside a fork)
+* Implement memcached instead of memcache as a client interface (to make it faster)
 
 = Authors
 

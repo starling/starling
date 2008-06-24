@@ -1,4 +1,10 @@
-== 0.9.7.6 2008-05-04
+== 0.9.7.7
+* added init.d scripts for redhat and ubuntu by Mike Perham <mperham@gmail.com>
+* fixed dependencies for SyslogLogger, eventmachine and memcache-client by Mike Perham <mperham@gmail.com>
+* added starling_top script to monitor starling server by Mike Perham <mperham@gmail.com>
+* fixed starling_top to use 22122 as port by Abdul-Rahman Advany <abdulrahman@advany.com>
+
+== 0.9.7.6 2008-06-24
 * removed client code (will be added to different project) by Abdul-Rahman Advany <abdulrahman@advany.com>
 
 == 0.9.7.5 2008-05-04

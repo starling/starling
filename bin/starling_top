@@ -6,7 +6,7 @@ require 'socket'
 
 @options = OpenStruct.new
 @options.hostname = 'localhost'
-@options.port = 11211
+@options.port = 22122
 
 op = OptionParser.new do |opts|
 	opts.banner = "STARLING TOP\nUsage: startop [options]"
@@ -14,7 +14,7 @@ op = OptionParser.new do |opts|
 	opts.on("-h HOSTNAME", "--hostname=HOSTNAME", "Hostname [default: localhost]") do |h|
 		@options.hostname = h
 	end
-	opts.on("-p PORT", "--port=PORT", Integer, "Port [default: 11211]") do |p|
+	opts.on("-p PORT", "--port=PORT", Integer, "Port [default: 22122]") do |p|
 		@options.port = p
 	end
 	opts.on_tail("--help", "Show this message") do

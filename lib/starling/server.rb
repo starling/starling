@@ -11,7 +11,7 @@ require File.join(here, 'handler')
 
 module StarlingServer
 
-  VERSION = "0.9.7.5"
+  VERSION = "0.9.7.7"
   
   class Base
     attr_reader :logger
