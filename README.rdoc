@@ -73,15 +73,15 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 	
 	This fork of the memcache-client source is hosted at GitHub and can be found at:
 
-  http://github.com/fiveruns/memcache-client/tree/master
+	http://github.com/fiveruns/memcache-client/tree/master
 
-  It can be installed using:
+	It can be installed using:
 
-  # THIS COMMAND ONE TIME ONLY
-  gem sources -a http://gems.github.com/
+	# THIS COMMAND ONE TIME ONLY
+	gem sources -a http://gems.github.com/
 
-  # As often as you like
-  sudo gem install fiveruns-memcache-client
+	# As often as you like
+	sudo gem install fiveruns-memcache-client
 
 = Known Issues
 
