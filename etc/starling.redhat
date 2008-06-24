@@ -1,0 +1,63 @@
+#!/bin/bash
+#
+# starling    This shell script takes care of starting and stopping
+#                    the starling server
+# chkconfig: 345 98 98
+# description: The starling queue server
+
+#determine where the 'pidof' executable is located
+if [ -e /bin/pidof ]; then
+  PIDOF="/bin/pidof"
+elif [ -e /sbin/pidof ]; then
+  PIDOF="/sbin/pidof"
+elif [ -e /usr/local/bin/pidof ]; then
+  PIDOF="/usr/local/bin/pidof"
+elif [ -e /bin/pgrep ]; then
+  PIDOF="/bin/pgrep"
+elif [ -e /usr/bin/pgrep ]; then
+  PIDOF="/usr/bin/pgrep"
+elif [ -e /usr/local/bin/pgrep ]; then
+  PIDOF="/usr/local/bin/pgrep"
+else
+  echo "Could not find pidof or pgrep"
+fi
+
+PROGDIR="/usr/bin"
+PROGNAME="starling"
+OPTIONS="-u nobody -g nobody -L /var/log/starling.log -q /var/spool/starling"
+
+start() {
+  pid=`$PIDOF $PROGNAME`
+  if [ "$pid" != "" ]; then
+    echo "$PROGDIR$PROGNAME already running: $pid"
+  else
+    echo "Starting $PROGDIR$PROGNAME"
+    cd $PROGDIR
+    nohup $PROGDIR$PROGNAME $OPTIONS &
+  fi
+}
+
+stop() {
+  pid=`$PIDOF $PROGNAME`
+  if [ "$pid" != "" ]; then
+    echo "Stopping $PROGDIR$PROGNAME: $pid"
+    kill $pid
+  else
+    echo "$PROGDIR$PROGNAME not running"
+  fi
+}
+
+case "$1" in
+start)
+  start
+;;
+stop)
+  stop
+;;
+restart)
+  stop
+  sleep 3
+  start
+;;
+
+esac

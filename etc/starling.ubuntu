@@ -1,0 +1,71 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides: starling
+# Required-Start: $local_fs $remote_fs
+# Required-Stop: $local_fs $remote_fs
+# Default-Start: 2 3 4 5
+# Default-Stop: S 0 1 6
+# Short-Description: Starling queue server
+# Description: The Starling distributed, transactional queue server
+### END INIT INFO
+# Author: Twitter
+# Version: 0.9.7.5
+
+set -e
+
+DUSER=starling
+DGROUP=starling
+LOGFILE=/var/log/starling/starling.log
+SPOOLDIR=/var/spool/starling
+PORT=22122
+LISTEN=0.0.0.0
+PIDFILE=/var/run/starling/starling.pid
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+NAME=starling
+DESC="Starling"
+INSTALL_DIR=/usr/local/bin
+DAEMON=$INSTALL_DIR/$NAME
+SCRIPTNAME=/etc/init.d/$NAME
+OPTS="-h $LISTEN -p $PORT -d -q $SPOOLDIR -P $PIDFILE -L $LOGFILE"
+
+. /lib/lsb/init-functions
+
+
+# Gracefully exit if the package has been removed.
+test -x $DAEMON || exit 0
+
+d_start() {
+	log_begin_msg "Starting Starling Server..."
+		start-stop-daemon -c $DUSER:$DGROUP --start --quiet --pidfile $PIDFILE --exec $DAEMON \
+		-- $OPTS || log_end_msg 1
+		log_end_msg 0
+}
+
+d_stop() {
+	log_begin_msg "Stopping Starling Server..."
+		start-stop-daemon -c $DUSER:$DGROUP --stop --quiet --pidfile $PIDFILE \
+		|| log_end_msg 1
+		log_end_msg 0
+}
+
+case "$1" in
+start)
+d_start
+;;
+stop)
+d_stop
+;;
+restart|force-reload|reload)
+d_stop
+sleep 2
+d_start
+;;
+*)
+echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
+exit 3
+;;
+esac
+
+exit 0
+
