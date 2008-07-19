@@ -41,17 +41,17 @@ that speaks MemCache can take advantage of Starling's queue facilities.
   # In a new console test the put and get of messages on a queue:
 
   irb
-  &gt;> require 'starling'
-  =&gt; true
-  &gt;> starling = Starling.new('127.0.0.1:22122')
-  =&gt; MemCache: 1 servers, 1 buckets, ns: nil, ro: false
-  &gt;> starling.set('my_queue', 12345)
-  =&gt; nil
-  &gt;> starling.get('my_queue')
-  =&gt; 12345
+  >> require 'starling'
+  => true
+  >> starling = Starling.new('127.0.0.1:22122')
+  => MemCache: 1 servers, 1 buckets, ns: nil, ro: false
+  >> starling.set('my_queue', 12345)
+  => nil
+  >> starling.get('my_queue')
+  => 12345
 
   # You can do a simple loop over a queue with something like:
-  &gt;> loop { puts starling.get('my_queue'); sleep 1 }
+  >> loop { puts starling.get('my_queue'); sleep 1 }
   12345
   nil
   nil
@@ -94,13 +94,13 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 
 = Authors
 
-* Blaine Cook &lt;romeda@gmail.com&gt;
-* Chris Wanstrath &lt;chris@ozmm.org&gt;
-* AnotherBritt &lt;?&gt;
-* Glenn Rempe &lt;?&gt;
-* Abdul-Rahman Advany &lt;abdulrahman@advany.com&gt;
+* Blaine Cook <romeda@gmail.com>
+* Chris Wanstrath <chris@ozmm.org>
+* AnotherBritt <?>
+* Glenn Rempe <?>
+* Abdul-Rahman Advany <abdulrahman@advany.com>
 
 = Copyright
 
 Starling - a light-weight server for reliable distributed message passing.
-Copyright 2007-2008 Blaine Cook &lt;blaine@twitter.com&gt;, Twitter Inc.
+Copyright 2007-2008 Blaine Cook <blaine@twitter.com>, Twitter Inc.
