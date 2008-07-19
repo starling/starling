@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 	s.name = "starling"
 	s.version = "0.9.7.7"
-	s.authors = ["Blaine Cook", "Chris Wanstrath", "anotherbritt", "Glenn Rempe", "Abdul-Rahman Advany"]
+	s.authors = ["Blaine Cook", "Chris Wanstrath", "Britt Selvitelle", "Glenn Rempe", "Abdul-Rahman Advany"]
 	s.email = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com"]
 	s.homepage = "http://github.com/starling/starling/"
 	s.summary = "Starling is a lightweight, transactional, distributed queue server"
@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 	s.rdoc_options = ["--quiet", "--title", "starling documentation", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source"]
 	s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "LICENSE"]
 
-	s.add_dependency 'memcache-client'
-	s.add_dependency 'SyslogLogger'
-	s.add_dependency 'eventmachine'
+	s.add_runtime_dependency 'memcache-client'
+	s.add_runtime_dependency 'SyslogLogger'
+	s.add_runtime_dependency 'eventmachine', [">= 0.12.0"]
 end
