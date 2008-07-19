@@ -15,7 +15,7 @@ module StarlingServer
 
     def initialize(path)
       unless File.directory?(path) && File.writable?(path)
-        raise InaccessibleQueuePath.new(path)
+        raise InaccessibleQueuePath.new("#{path} must exist and be writable by #{Etc.getpwuid(Process.uid).name}.")
       end
 
       @shutdown_mutex = Mutex.new
