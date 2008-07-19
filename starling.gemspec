@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
 	s.name = "starling"
-	s.version = "0.9.7.7"
+	s.version = "0.9.7.8"
 	s.authors = ["Blaine Cook", "Chris Wanstrath", "Britt Selvitelle", "Glenn Rempe", "Abdul-Rahman Advany"]
 	s.email = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com"]
 	s.homepage = "http://github.com/starling/starling/"
