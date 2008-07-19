@@ -99,12 +99,12 @@ module StarlingServer
           options[:pid_file] = pid_file
         end
 
-        opts.on("-u", "--user USER", Integer, "User to run as") do |user|
-          options[:user] = user
+        opts.on("-u", "--user USER", "User to run as") do |user|
+          options[:user] = user.to_i == 0 ? Etc.getpwnam(user).uid : user.to_i
         end
 
         opts.on("-gGROUP", "--group GROUP", "Group to run as") do |group|
-          options[:group] = group
+          options[:group] = group.to_i == 0 ? Etc.getgrnam(group).gid : group.to_i
         end
 
         opts.separator ""; opts.separator "Logging:"
