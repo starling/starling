@@ -2,6 +2,8 @@ require 'rubygems'
 require 'rake/rdoctask'
 require 'spec/rake/spectask'
 
+task :default => :spec
+
 task :install do
   sh %{gem build starling.gemspec}
   sh %{sudo gem install starling-*.gem}
