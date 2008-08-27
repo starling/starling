@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
 	s.name = "starling"
-	s.version = "0.9.7.10"
+	s.version = "0.9.7.11"
 	s.authors = ["Blaine Cook", "Chris Wanstrath", "Britt Selvitelle", "Glenn Rempe", "Abdul-Rahman Advany"]
 	s.email = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com"]
 	s.homepage = "http://github.com/starling/starling/"
@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 	s.rdoc_options = ["--quiet", "--title", "starling documentation", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source"]
 	s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "LICENSE"]
 
-	s.add_dependency 'fiveruns-memcache-client'
+	s.add_dependency 'memcache-client'
 	s.add_dependency 'SyslogLogger'
 	s.add_dependency 'eventmachine', [">= 0.12.0"]
 end
