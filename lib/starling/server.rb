@@ -2,7 +2,6 @@ require 'socket'
 require 'logger'
 require 'rubygems'
 require 'eventmachine'
-require 'analyzer_tools/syslog_logger'
 
 here = File.dirname(__FILE__)
 
@@ -68,12 +67,20 @@ module StarlingServer
     def run
       @stats[:start_time] = Time.now
 
-      @@logger = case @opts[:logger]
-                 when IO, String; Logger.new(@opts[:logger])
-                 when Logger; @opts[:logger]
-                 else; Logger.new(STDERR)
-                 end
-      @@logger = SyslogLogger.new(@opts[:syslog_channel]) if @opts[:syslog_channel]
+      if @opts[:syslog_channel]
+        begin
+          require 'syslog_logger'
+          @@logger = SyslogLogger.new(@opts[:syslog_channel])
+        rescue LoadError
+          # SyslogLogger isn't available, so we're just going to use Logger
+        end
+      end
+
+      @@logger ||= case @opts[:logger]
+                   when IO, String; Logger.new(@opts[:logger])
+                   when Logger; @opts[:logger]
+                   else; Logger.new(STDERR)
+                   end
 
       begin
         @opts[:queue] = QueueCollection.new(@opts[:path])

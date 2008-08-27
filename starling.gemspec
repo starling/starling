@@ -21,6 +21,5 @@ Gem::Specification.new do |s|
 	s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "LICENSE"]
 
 	s.add_dependency 'memcache-client'
-	s.add_dependency 'SyslogLogger'
 	s.add_dependency 'eventmachine', [">= 0.12.0"]
 end

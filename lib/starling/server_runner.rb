@@ -113,8 +113,13 @@ module StarlingServer
           options[:logger] = File.expand_path(log_path)
         end
 
-        opts.on("-l", "--syslog CHANNEL", "Write logs to the syslog instead of a log file.") do |channel|
-          options[:syslog_channel] = channel
+        begin
+          require 'syslog_logger'
+
+          opts.on("-l", "--syslog CHANNEL", "Write logs to the syslog instead of a log file.") do |channel|
+            options[:syslog_channel] = channel
+          end
+        rescue LoadError
         end
 
         opts.on("-v", "Increase logging verbosity (may be used multiple times).") do

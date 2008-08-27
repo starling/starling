@@ -1,3 +1,6 @@
+== 0.9.9
+* remove dependency on SyslogLogger so that starling works on windows.
+
 == 0.9.8
 * add fix to enable relative paths <david@motorator.com>
 * fix tests so they don't run 10 times due to a stupid bug with how the server is forked <seth@mojodna.net>
