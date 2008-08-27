@@ -22,7 +22,7 @@ def safely_fork(&block)
   while blocking
     sleep 0.1
   end
-  
+
   pid
 end
 
@@ -41,7 +41,11 @@ describe "StarlingServer" do
                                         :path => @tmp_path,
                                         :logger => Logger.new(STDERR),
                                         :log_level => Logger::FATAL)
-      Signal.trap("INT") { server.stop }
+      Signal.trap("INT") {
+        server.stop
+        exit
+      }
+
       Process.kill("USR1", Process.ppid)
       server.run
     end
@@ -61,7 +65,6 @@ describe "StarlingServer" do
     @client.set('test_set_and_get_one_entry', v)
     @client.get('test_set_and_get_one_entry').should eql(v)
   end
-  
   
   it "should expire entries" do
     v = rand((2**32)-1)
