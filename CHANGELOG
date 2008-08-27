@@ -1,3 +1,15 @@
+== 0.9.8
+* add fix to enable relative paths <david@motorator.com>
+* fix tests so they don't run 10 times due to a stupid bug with how the server is forked <seth@mojodna.net>
+* fix some other tests <romeda@gmail.com>
+* fix some error messages <romeda@gmail.com>
+* probably some other things <romeda@gmail.com>
+
+== 0.9.7.9
+* properly complain if the spool directory isn't writable <seth@mojodna.net>
+* assume group and user privileges in a working order <seth@mojodna.net>
+* support string user / group names in addition to uid/gids <seth@mojodna.net>
+
 == 0.9.7.7
 * added init.d scripts for redhat and ubuntu by Mike Perham <mperham@gmail.com>
 * fixed dependencies for SyslogLogger, eventmachine and memcache-client by Mike Perham <mperham@gmail.com>
