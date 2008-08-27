@@ -146,45 +146,42 @@ describe "StarlingServer" do
     # handle more than 1024 connections.
     
     unless IO::popen("uname").read.chomp == "Linux"
-      raise "(Skipping epoll test: not on Linux)"
-      skip = true
+      pending "skipping epoll test: not on Linux"
     end
+
     fd_limit = IO::popen("bash -c 'ulimit -n'").read.chomp.to_i
     unless fd_limit > 1024
-      raise "(Skipping epoll test: 'ulimit -n' = #{fd_limit}, need > 1024)"
-      skip = true
+      pending "skipping epoll test: 'ulimit -n' = #{fd_limit}, need > 1024"
     end
     
-    unless skip
-      v = rand(2**32 - 1)
-      @client.set('test_epoll', v)
+    v = rand(2**32 - 1)
+    @client.set('test_epoll', v)
 
-      # we can't open 1024 connections to memcache from within this process,
-      # because we will hit ruby's 1024 fd limit ourselves!
-      pid1 = safely_fork do
-        unused_sockets = []
-        600.times do
-          unused_sockets << TCPSocket.new("127.0.0.1", 22133)
-        end
-        Process.kill("USR1", Process.ppid)
-        sleep 90
+    # we can't open 1024 connections to memcache from within this process,
+    # because we will hit ruby's 1024 fd limit ourselves!
+    pid1 = safely_fork do
+      unused_sockets = []
+      600.times do
+        unused_sockets << TCPSocket.new("127.0.0.1", 22133)
       end
-      pid2 = safely_fork do
-        unused_sockets = []
-        600.times do
-          unused_sockets << TCPSocket.new("127.0.0.1", 22133)
-        end
-        Process.kill("USR1", Process.ppid)
-        sleep 90
+      Process.kill("USR1", Process.ppid)
+      sleep 90
+    end
+    pid2 = safely_fork do
+      unused_sockets = []
+      600.times do
+        unused_sockets << TCPSocket.new("127.0.0.1", 22133)
       end
+      Process.kill("USR1", Process.ppid)
+      sleep 90
+    end
 
-      begin
-        client = MemCache.new('127.0.0.1:22133')
-        client.get('test_epoll').should eql(v)
-      ensure
-        Process.kill("TERM", pid1)
-        Process.kill("TERM", pid2)
-      end
+    begin
+      client = MemCache.new('127.0.0.1:22133')
+      client.get('test_epoll').should eql(v)
+    ensure
+      Process.kill("TERM", pid1)
+      Process.kill("TERM", pid2)
     end
   end
   
