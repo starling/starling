@@ -48,7 +48,7 @@ STAT limit_maxbytes %d
 STAT queue_%s_total_items %d
 STAT queue_%s_logsize %d
 STAT queue_%s_expired_items %d
-STAT queue_%s_age %d\n".freeze
+STAT queue_%s_age %d\r\n".freeze
 
     SHUTDOWN_COMMAND = /\Ashutdown\r\n/m
 
