@@ -51,11 +51,11 @@ module StarlingServer
     def parse_options
       self.options = { :host => '127.0.0.1',
                        :port => 22122,
-                       :path => File.join(%w( / tmp starling spool )),
+                       :path => File.join(['', 'var', 'spool', 'starling'),
                        :log_level => Logger::INFO,
                        :daemonize => false,
                        :timeout => 0,
-                       :pid_file => File.join(%w( / tmp starling starling.pid )) }
+                       :pid_file => File.join(['', 'var', 'run', 'starling.pid']) }
 
       OptionParser.new do |opts|
         opts.summary_width = 25
