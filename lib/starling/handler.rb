@@ -25,29 +25,29 @@ module StarlingServer
 
     # STAT Response
     STATS_COMMAND = /\Astats\r\n/m
-    STATS_RESPONSE = "STAT pid %d
-STAT uptime %d
-STAT time %d
-STAT version %s
-STAT rusage_user %0.6f
-STAT rusage_system %0.6f
-STAT curr_items %d
-STAT total_items %d
-STAT bytes %d
-STAT curr_connections %d
-STAT total_connections %d
-STAT cmd_get %d
-STAT cmd_set %d
-STAT get_hits %d
-STAT get_misses %d
-STAT bytes_read %d
-STAT bytes_written %d
-STAT limit_maxbytes %d
+    STATS_RESPONSE = "STAT pid %d\r
+STAT uptime %d\r
+STAT time %d\r
+STAT version %s\r
+STAT rusage_user %0.6f\r
+STAT rusage_system %0.6f\r
+STAT curr_items %d\r
+STAT total_items %d\r
+STAT bytes %d\r
+STAT curr_connections %d\r
+STAT total_connections %d\r
+STAT cmd_get %d\r
+STAT cmd_set %d\r
+STAT get_hits %d\r
+STAT get_misses %d\r
+STAT bytes_read %d\r
+STAT bytes_written %d\r
+STAT limit_maxbytes %d\r
 %sEND\r\n".freeze
-    QUEUE_STATS_RESPONSE = "STAT queue_%s_items %d
-STAT queue_%s_total_items %d
-STAT queue_%s_logsize %d
-STAT queue_%s_expired_items %d
+    QUEUE_STATS_RESPONSE = "STAT queue_%s_items %d\r
+STAT queue_%s_total_items %d\r
+STAT queue_%s_logsize %d\r
+STAT queue_%s_expired_items %d\r
 STAT queue_%s_age %d\r\n".freeze
 
     SHUTDOWN_COMMAND = /\Ashutdown\r\n/m
