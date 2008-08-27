@@ -51,11 +51,11 @@ module StarlingServer
     def parse_options
       self.options = { :host => '127.0.0.1',
                        :port => 22122,
-                       :path => File.join(['', 'var', 'spool', 'starling'),
+                       :path => File.join('', 'var', 'spool', 'starling'),
                        :log_level => Logger::INFO,
                        :daemonize => false,
                        :timeout => 0,
-                       :pid_file => File.join(['', 'var', 'run', 'starling.pid']) }
+                       :pid_file => File.join('', 'var', 'run', 'starling.pid') }
 
       OptionParser.new do |opts|
         opts.summary_width = 25
@@ -76,7 +76,7 @@ module StarlingServer
         opts.on("-q", "--queue_path PATH",
                 :REQUIRED,
                 "Path to store Starling queue logs", "(default: #{options[:path]})") do |queue_path|
-          options[:path] = queue_path
+          options[:path] = File.expand_path(queue_path)
         end
 
         opts.separator ""; opts.separator "Network:"
@@ -96,7 +96,7 @@ module StarlingServer
         end
 
         opts.on("-PFILE", "--pid FILENAME", "save PID in FILENAME when using -d option.", "(default: #{options[:pid_file]})") do |pid_file|
-          options[:pid_file] = pid_file
+          options[:pid_file] = File.expand_path(pid_file)
         end
 
         opts.on("-u", "--user USER", "User to run as") do |user|
@@ -110,7 +110,7 @@ module StarlingServer
         opts.separator ""; opts.separator "Logging:"
 
         opts.on("-L", "--log [FILE]", "Path to print debugging information.") do |log_path|
-          options[:logger] = log_path
+          options[:logger] = File.expand_path(log_path)
         end
 
         opts.on("-l", "--syslog CHANNEL", "Write logs to the syslog instead of a log file.") do |channel|
