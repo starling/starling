@@ -75,7 +75,12 @@ module StarlingServer
                  end
       @@logger = SyslogLogger.new(@opts[:syslog_channel]) if @opts[:syslog_channel]
 
-      @opts[:queue] = QueueCollection.new(@opts[:path])
+      begin
+        @opts[:queue] = QueueCollection.new(@opts[:path])
+      rescue InaccessibleQueuePath => e
+        puts "Error: #{e.message}"
+        exit 1
+      end
       @@logger.level = @opts[:log_level] || Logger::ERROR
 
       @@logger.info "Starling STARTUP on #{@opts[:host]}:#{@opts[:port]}"
