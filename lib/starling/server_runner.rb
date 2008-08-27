@@ -216,7 +216,7 @@ module StarlingServer
       safefork and exit
 
       unless sess_id = Process.setsid
-        raise "Couldn't detache from controlling terminal."
+        raise "Couldn't detach from controlling terminal."
       end
 
       trap 'SIGHUP', 'IGNORE'
