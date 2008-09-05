@@ -1,4 +1,6 @@
 require File.join(File.dirname(__FILE__), 'server')
+require 'erb'
+require 'fileutils'
 require 'optparse'
 require 'yaml'
 
@@ -34,7 +36,7 @@ module StarlingServer
     end
 
     def load_config_file(filename)
-      config = YAML.load(File.open(filename))
+      config = YAML.load(ERB.new(File.read(filename)).result)
 
       unless config.is_a?(Hash)
         STDERR.puts "Config file does not contain a hash: #{filename}, exiting."
