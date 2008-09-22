@@ -3,16 +3,24 @@ require 'memcache'
 class Starling < MemCache
 
   WAIT_TIME = 0.25
+  alias_method :_original_get, :get
 
   ##
   # fetch an item from a queue.
 
   def get(*args)
     loop do
-      response = super(*args)
+      response = _original_get(*args)
       return response unless response.nil?
       sleep WAIT_TIME
     end
+  end
+  
+  ##
+  # will return the next item or nil
+
+  def fetch(*args)
+    _original_get(*args)
   end
 
   ##
