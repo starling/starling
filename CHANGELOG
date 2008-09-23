@@ -2,6 +2,8 @@
 * remove dependency on SyslogLogger so that starling works on windows.
 * fix config file loading so relative paths are expanded properly <jacob@jacobatzen.dk>
 * clean up redhat init.d script <gaffneyc@gmail.com>
+* add a 'fetch' command that is non-blocking equivalent to 'get' <aaron.hawkins@shawkvalue.com>
+* implement the 'delete' method to allow queues to be deleted <timshadel@gmail.com>
 
 == 0.9.8
 * add fix to enable relative paths <david@motorator.com>

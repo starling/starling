@@ -22,6 +22,10 @@ module StarlingServer
     SET_RESPONSE_SUCCESS  = "STORED\r\n".freeze
     SET_RESPONSE_FAILURE  = "NOT STORED\r\n".freeze
     SET_CLIENT_DATA_ERROR = "CLIENT_ERROR bad data chunk\r\nERROR\r\n".freeze
+    
+    # DELETE Responses
+    DELETE_COMMAND = /\Adelete (.{1,250}) ([0-9]+)\r\n/m
+    DELETE_RESPONSE = "END\r\n".freeze
 
     # STAT Response
     STATS_COMMAND = /\Astats\r\n/m
@@ -108,7 +112,6 @@ STAT queue_%s_age %d\r\n".freeze
         @data_buf = data
         return
       end
-
       case data
       when SET_COMMAND
         @server.stats[:set_requests] += 1
@@ -121,6 +124,8 @@ STAT queue_%s_age %d\r\n".freeze
       when SHUTDOWN_COMMAND
         # no point in responding, they'll never get it.
         Runner::shutdown
+      when DELETE_COMMAND
+        delete $1
       else
         logger.warn "Unknown command: #{data}."
         respond ERR_UNKNOWN_COMMAND
@@ -136,6 +141,12 @@ STAT queue_%s_age %d\r\n".freeze
     end
 
   private
+  
+    def delete(queue)
+      @queue_collection.delete(queue)
+      respond DELETE_RESPONSE
+    end
+  
     def respond(str, *args)
       response = sprintf(str, *args)
       @server.stats[:bytes_written] += response.length

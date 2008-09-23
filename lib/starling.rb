@@ -4,6 +4,7 @@ class Starling < MemCache
 
   WAIT_TIME = 0.25
   alias_method :_original_get, :get
+  alias_method :_original_delete, :delete
 
   ##
   # fetch an item from a queue.
@@ -23,6 +24,39 @@ class Starling < MemCache
     _original_get(*args)
   end
 
+  ##
+  # Delete the key (queue) from all Starling servers. This is necessary
+  # because the random way a server is chosen in #get_server_for_key
+  # implies that the queue could easily be spread across the entire
+  # Starling cluster.
+
+  def delete(key, expiry = 0)
+    with_servers do
+      _original_delete(key, expiry)
+    end
+  end
+
+  ##
+  # Provides a way to work with a specific list of servers by
+  # forcing all calls to #get_server_for_key to use a specific
+  # server, and changing that server each time that the call
+  # yields to the block provided.  This helps work around the
+  # normally random nature of the #get_server_for_key method.
+  #
+  # Acquires the mutex for the entire duration of the call
+  # since unrelated calls to #get_server_for_key might be
+  # adversely affected by the non_random result.
+  def with_servers(my_servers = @servers.dup)
+    return unless block_given?
+    with_lock do
+      my_servers.each do |server|
+        @force_server = server
+        yield
+      end
+      @force_server = nil
+    end
+  end
+  
   ##
   # insert +value+ into +queue+.
   #
@@ -98,6 +132,7 @@ class Starling < MemCache
     raise ArgumentError, "illegal character in key #{key.inspect}" if key =~ /\s/
     raise ArgumentError, "key too long #{key.inspect}" if key.length > 250
     raise MemCacheError, "No servers available" if @servers.empty?
+    return @force_server if @force_server
 
     bukkits = @buckets.dup
     bukkits.nitems.times do |try|
@@ -109,4 +144,25 @@ class Starling < MemCache
 
     raise MemCacheError, "No servers available (all dead)"
   end
+end
+
+
+class MemCache
+
+ protected
+
+  ##
+  # Ensure that everything within the given block is executed
+  # within the locked mutex if this client is multithreaded.
+  # If the client isn't multithreaded, the block is simply executed.
+  def with_lock
+    return unless block_given?
+    begin
+      @mutex.lock if @multithread
+      yield
+    ensure
+      @mutex.unlock if @multithread
+    end
+  end
+
 end

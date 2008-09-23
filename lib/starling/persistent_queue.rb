@@ -83,6 +83,11 @@ module StarlingServer
       @trx = nil
       @not_trx.close
     end
+    
+    def purge
+      close
+      File.delete(log_path)
+    end
 
     private
 

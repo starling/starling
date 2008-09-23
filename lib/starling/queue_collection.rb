@@ -59,6 +59,12 @@ module StarlingServer
       @stats[:current_bytes] -= result.size
       result
     end
+    
+    def delete(key)
+      queue = @queues.delete(key)
+      return if queue.nil?
+      queue.purge
+    end
 
     ##
     # Returns all active queues.

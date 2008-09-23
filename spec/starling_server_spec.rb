@@ -4,6 +4,7 @@ require 'rubygems'
 require 'fileutils'
 require 'memcache'
 require 'digest/md5'
+require 'starling'
 
 require 'starling/server'
 
@@ -51,6 +52,7 @@ describe "StarlingServer" do
     end
 
     @client = MemCache.new('127.0.0.1:22133')
+
   end
   
   it "should test if temp_path exists and is writeable" do
@@ -64,6 +66,15 @@ describe "StarlingServer" do
     @client.get('test_set_and_get_one_entry').should be_nil
     @client.set('test_set_and_get_one_entry', v)
     @client.get('test_set_and_get_one_entry').should eql(v)
+  end
+  
+  it "should respond to delete" do
+    @client.delete("my_queue").should eql("END\r\n")   
+    starling_client = Starling.new('127.0.0.1:22133')
+    starling_client.set('my_queue', 50)
+    starling_client.available_queues.size.should eql(1)
+    starling_client.delete("my_queue")
+    starling_client.available_queues.size.should eql(0)
   end
   
   it "should expire entries" do
