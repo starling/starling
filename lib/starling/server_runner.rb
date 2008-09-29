@@ -40,6 +40,11 @@ module StarlingServer
         when "queue_path" then key = "path"
         when "log_file" then key = "logger"
         end
+
+        if %w(logger path pid_file).include?(key)
+          value = File.expand_path(value)
+        end
+
         options[key.to_sym] = value
 
         if options[:log_level].instance_of?(String)
