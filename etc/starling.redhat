@@ -1,63 +1,66 @@
 #!/bin/bash
 #
+# Make sure the /var/run/starling, /var/log/starling and /var/spool/starling
+# all exist and are owned by starling:starling
+#
 # starling    This shell script takes care of starting and stopping
 #                    the starling server
 # chkconfig: 345 98 98
 # description: The starling queue server
+# processname: starling
+# pidfile: /var/run/starling/starling.pid
+# logfile: /var/log/starling/starling.log
 
-#determine where the 'pidof' executable is located
-if [ -e /bin/pidof ]; then
-  PIDOF="/bin/pidof"
-elif [ -e /sbin/pidof ]; then
-  PIDOF="/sbin/pidof"
-elif [ -e /usr/local/bin/pidof ]; then
-  PIDOF="/usr/local/bin/pidof"
-elif [ -e /bin/pgrep ]; then
-  PIDOF="/bin/pgrep"
-elif [ -e /usr/bin/pgrep ]; then
-  PIDOF="/usr/bin/pgrep"
-elif [ -e /usr/local/bin/pgrep ]; then
-  PIDOF="/usr/local/bin/pgrep"
-else
-  echo "Could not find pidof or pgrep"
-fi
+# Source function library.
+. /etc/rc.d/init.d/functions
 
-PROGDIR="/usr/bin"
-PROGNAME="starling"
-OPTIONS="-u nobody -g nobody -L /var/log/starling.log -q /var/spool/starling"
+# Source networking configuration.
+[ -f /etc/sysconfig/network ] && . /etc/sysconfig/network
+
+DUSER=starling
+DGROUP=starling
+LOGFILE=/var/log/starling/starling.log
+SPOOLDIR=/var/spool/starling
+PORT=22122
+LISTEN=0.0.0.0
+PIDFILE=/var/run/starling/starling.pid
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+NAME=starling
+INSTALL_DIR=/usr/local/bin
+DAEMON=$INSTALL_DIR/$NAME
+OPTS="-h $LISTEN -p $PORT -d -q $SPOOLDIR -P $PIDFILE -L $LOGFILE -u $DUSER -g $DGROUP"
 
 start() {
-  pid=`$PIDOF $PROGNAME`
-  if [ "$pid" != "" ]; then
-    echo "$PROGDIR$PROGNAME already running: $pid"
-  else
-    echo "Starting $PROGDIR$PROGNAME"
-    cd $PROGDIR
-    nohup $PROGDIR$PROGNAME $OPTIONS &
-  fi
+  echo -n $"Starting starling: "
+
+  daemon --pidfile=$PIDFILE $DAEMON $OPTS
+  echo
 }
 
 stop() {
-  pid=`$PIDOF $PROGNAME`
-  if [ "$pid" != "" ]; then
-    echo "Stopping $PROGDIR$PROGNAME: $pid"
-    kill $pid
-  else
-    echo "$PROGDIR$PROGNAME not running"
-  fi
+  echo -n $"Stopping starling: "
+
+  killproc -p $PIDFILE starling
+  echo
 }
 
 case "$1" in
-start)
-  start
-;;
-stop)
-  stop
-;;
-restart)
-  stop
-  sleep 3
-  start
-;;
-
+  start)
+    start
+  ;;
+  stop)
+    stop
+  ;;
+  restart)
+    stop
+    sleep 3
+    start
+  ;;
+  status)
+    status -p $PIDFILE starling
+  ;;
+  *)
+    echo $"Usage: $0 {start|stop|restart|status}"
+    exit 1
 esac
