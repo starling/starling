@@ -1,5 +1,6 @@
 == 0.9.9
 * remove dependency on SyslogLogger so that starling works on windows.
+* fix config file loading so relative paths are expanded properly <jacob@jacobatzen.dk>
 
 == 0.9.8
 * add fix to enable relative paths <david@motorator.com>
