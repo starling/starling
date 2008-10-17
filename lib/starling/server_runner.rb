@@ -34,7 +34,19 @@ module StarlingServer
     end
 
     def load_config_file(filename)
-      YAML.load(File.open(filename))['starling'].each do |key, value|
+      config = YAML.load(File.open(filename))
+
+      unless config.is_a?(Hash)
+        STDERR.puts "Config file does not contain a hash: #{filename}, exiting."
+        exit(1)
+      end
+
+      if config['starling'].nil?
+        STDERR.puts "Missing starling section in config file: #{filename}, exiting."
+        exit(1)
+      end
+
+      config['starling'].each do |key, value|
         # alias some keys
         case key
         when "queue_path" then key = "path"
