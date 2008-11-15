@@ -56,6 +56,7 @@ STAT queue_%s_age %d\r\n".freeze
 
     SHUTDOWN_COMMAND = /\Ashutdown\r\n/m
 
+    QUIT_COMMAND = /\Aquit\r\n/m
 
     @@next_session_id = 1
 
@@ -126,6 +127,9 @@ STAT queue_%s_age %d\r\n".freeze
         Runner::shutdown
       when DELETE_COMMAND
         delete $1
+      when QUIT_COMMAND
+        # ignore the command, client is closing connection.
+        return nil
       else
         logger.warn "Unknown command: #{data}."
         respond ERR_UNKNOWN_COMMAND
