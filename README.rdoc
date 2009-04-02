@@ -85,6 +85,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 
 = Known Issues
 
+* Only tested with Memcache client 1.7.x and with SystemTimer (http://systemtimer.rubyforge.org/)
 * Starling is "slow" as far as messaging systems are concerned. In practice,
   it's fast enough.
 
