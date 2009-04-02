@@ -43,17 +43,14 @@ class Starling < MemCache
   # yields to the block provided.  This helps work around the
   # normally random nature of the #get_server_for_key method.
   #
-  # Acquires the mutex for the entire duration of the call
-  # since unrelated calls to #get_server_for_key might be
-  # adversely affected by the non_random result.
   def with_servers(my_servers = self.servers.dup)
     return unless block_given?
-    with_lock do
+    # with_lock do
       my_servers.each do |server|
-        @force_server = server
+        # @force_server = server
         yield
-      end
-      @force_server = nil
+      # end
+      # @force_server = nil
     end
   end
   
@@ -144,24 +141,4 @@ class Starling < MemCache
   
     raise MemCacheError, "No servers available (all dead)"
   end
-end
-
-class MemCache
-
- protected
-
-  ##
-  # Ensure that everything within the given block is executed
-  # within the locked mutex if this client is multithreaded.
-  # If the client isn't multithreaded, the block is simply executed.
-  def with_lock
-    return unless block_given?
-    begin
-      @mutex.lock if multithread
-      yield
-    ensure
-      @mutex.unlock if multithread
-    end
-  end
-
 end
