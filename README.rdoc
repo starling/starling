@@ -11,7 +11,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 
 = Installation
 
-  This fork of the Starling source is hosted at GitHub and can be found at:
+  The Starling source is hosted at GitHub and can be found at:
 
   http://github.com/starling/starling/tree/master
 
@@ -44,7 +44,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
   >> require 'starling'
   => true
   >> starling = Starling.new('127.0.0.1:22122')
-  => MemCache: 1 servers, 1 buckets, ns: nil, ro: false
+  => MemCache: 1 servers, ns: nil, ro: false
   >> starling.set('my_queue', 12345)
   => nil
   >> starling.get('my_queue')
@@ -67,13 +67,13 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 	
   'rdoc'
 
-= Using fiveruns memcache-client
+= Using memcache-client
 
-	memcache-client from fiveruns has a couple of fixed added like supporting failover and retry on failure.
+	memcache-client is now maintained by Mike Perham (http://www.mikeperham.com/)
 	
-	This fork of the memcache-client source is hosted at GitHub and can be found at:
+	He is the current maintainer of the gem which is hosted at GitHub and can be found at:
 
-	http://github.com/fiveruns/memcache-client/tree/master
+  http://github.com/mperham/memcache-client/tree/master
 
 	It can be installed using:
 
@@ -81,7 +81,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 	gem sources -a http://gems.github.com/
 
 	# As often as you like
-	sudo gem install fiveruns-memcache-client
+	sudo gem install memcache-client
 
 = Known Issues
 
@@ -99,6 +99,7 @@ that speaks MemCache can take advantage of Starling's queue facilities.
 * AnotherBritt <?>
 * Glenn Rempe <?>
 * Abdul-Rahman Advany <abdulrahman@advany.com>
+* Harm Aarts <harmaarts@gmail.com>
 
 = Copyright
 

@@ -1,3 +1,7 @@
+== 0.10.0
+* Solved compatibility issues with the new (and awesome, thanks mperham) Memcache client
+* Fixed the old rspec tests.
+
 == 0.9.9
 * remove dependency on SyslogLogger so that starling works on windows.
 * fix config file loading so relative paths are expanded properly <jacob@jacobatzen.dk>
