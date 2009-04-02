@@ -132,20 +132,19 @@ class Starling < MemCache
     raise ArgumentError, "illegal character in key #{key.inspect}" if key =~ /\s/
     raise ArgumentError, "key too long #{key.inspect}" if key.length > 250
     raise MemCacheError, "No servers available" if @servers.empty?
-    return @force_server if @force_server
-
-    bukkits = @buckets.dup
-    bukkits.nitems.times do |try|
-      n = rand(bukkits.nitems)
-      server = bukkits[n]
+ 
+    # Ignores server weights, oh well
+    srvs = self.servers.dup
+    srvs.size.times do |try|
+      n = rand(srvs.size)
+      server = srvs[n]
       return server if server.alive?
-      bukkits.delete_at(n)
+      srvs.delete_at(n)
     end
-
+  
     raise MemCacheError, "No servers available (all dead)"
   end
 end
-
 
 class MemCache
 
