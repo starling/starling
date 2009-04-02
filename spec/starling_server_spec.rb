@@ -140,8 +140,10 @@ describe "StarlingServer" do
   end
 
   it "should return valid response with unkown command" do
-    response = @client.add('blah', 1)
-    response.should eql("CLIENT_ERROR bad command line format\r\n")
+    #why is this an unknown command?
+    lambda {
+      response = @client.add('blah', 1)
+    }.should raise_error(MemCache::MemCacheError)
   end
 
   it "should disconnect and reconnect again" do
