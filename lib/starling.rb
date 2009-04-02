@@ -157,10 +157,10 @@ class MemCache
   def with_lock
     return unless block_given?
     begin
-      @mutex.lock if @multithread
+      @mutex.lock if multithread
       yield
     ensure
-      @mutex.unlock if @multithread
+      @mutex.unlock if multithread
     end
   end
 
