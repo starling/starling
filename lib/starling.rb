@@ -124,10 +124,10 @@ class Starling < MemCache
   def get_server_for_key(key)
     raise ArgumentError, "illegal character in key #{key.inspect}" if key =~ /\s/
     raise ArgumentError, "key too long #{key.inspect}" if key.length > 250
-    raise MemCacheError, "No servers available" if @servers.empty?
+    raise MemCacheError, "No servers available" if servers.empty?
  
     # Ignores server weights, oh well
-    srvs = self.servers.dup
+    srvs = servers.dup
     srvs.size.times do |try|
       n = rand(srvs.size)
       server = srvs[n]
