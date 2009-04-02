@@ -45,12 +45,8 @@ class Starling < MemCache
   #
   def with_servers(my_servers = self.servers.dup)
     return unless block_given?
-    # with_lock do
-      my_servers.each do |server|
-        # @force_server = server
-        yield
-      # end
-      # @force_server = nil
+    my_servers.each do |server|
+      yield
     end
   end
   
