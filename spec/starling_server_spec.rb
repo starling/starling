@@ -124,8 +124,8 @@ describe "StarlingServer" do
 
   it "should output statistics per server" do
     stats = @client.stats
-    assert_kind_of Hash, stats
-    assert stats.has_key?('127.0.0.1:22133')
+    stats.kind_of? Hash
+    stats.has_key?('127.0.0.1:22133').should be_true
     
     server_stats = stats['127.0.0.1:22133']
     
