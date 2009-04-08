@@ -2,3 +2,5 @@ pkg/*
 doc/*
 tmp/*
 
+.*.swp
+.DS_Store
