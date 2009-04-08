@@ -9,7 +9,7 @@
 # Description: The Starling distributed, transactional queue server
 ### END INIT INFO
 # Author: Twitter
-# Version: 0.9.7.7
+# Version: 0.10.0
 
 set -e
 
