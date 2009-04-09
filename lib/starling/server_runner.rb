@@ -182,8 +182,8 @@ module StarlingServer
     end
 
     def drop_privileges
-      Process.egid = options[:group] if options[:group]
-      Process.euid = options[:user] if options[:user]
+      Process::Sys.setresgid(options[:group], options[:group], options[:group]) if options[:group]
+      Process::Sys.setresuid(options[:user], options[:user], options[:user]) if options[:user]
     end
 
     def shutdown
