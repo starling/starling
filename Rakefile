@@ -29,8 +29,8 @@ task :gemspec do
 Gem::Specification.new do |s|
   s.name = "starling"
   s.version = "#{StarlingServer::VERSION}"
-  s.authors = ["Blaine Cook", "Chris Wanstrath", "Britt Selvitelle", "Glenn Rempe", "Abdul-Rahman Advany", "Seth Fitzsimmons"]
-  s.email = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com", "starlingmq@groups.google.com"]
+  s.authors = ["Blaine Cook", "Chris Wanstrath", "Britt Selvitelle", "Glenn Rempe", "Abdul-Rahman Advany", "Seth Fitzsimmons", "Harm Aarts", "Chris Gaffney"]
+  s.email = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com", "starlingmq@groups.google.com", "harmaarts@gmail.com", "gaffneyc@gmail.com"]
   s.homepage = "http://github.com/starling/starling/"
   s.summary = "Starling is a lightweight, transactional, distributed queue server"
   s.description = s.summary
@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--quiet", "--title", "starling documentation", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source"]
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "LICENSE"]
 
-  s.add_dependency 'fiveruns-memcache-client'
+  s.add_dependency 'memcache-client', [">= 1.7.0"]
   s.add_dependency 'eventmachine', [">= 0.12.0"]
 end
   EOF
