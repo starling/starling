@@ -5,11 +5,11 @@ begin
   require 'jeweler'
   
   Jeweler::Tasks.new do |s|
-    s.name = "xhr-starling"
+    s.name = "starling"
     s.version = "0.10.0"
     s.authors = ["Blaine Cook", "Chris Wanstrath", "Britt Selvitelle", "Glenn Rempe", "Abdul-Rahman Advany", "Seth Fitzsimmons", "Harm Aarts", "Chris Gaffney"]
     s.email = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com", "starlingmq@groups.google.com", "harmaarts@gmail.com", "gaffneyc@gmail.com"]
-    s.homepage = "http://github.com/xhr/starling/"
+    s.homepage = "http://github.com/starling/starling/"
     s.summary = "Starling is a lightweight, transactional, distributed queue server"
     s.description = s.summary
     
@@ -35,8 +35,6 @@ Rake::RDocTask.new do |rd|
   rd.rdoc_files.include("README.rdoc", "lib/**/*.rb")
   rd.rdoc_dir = 'doc'
 end
-
-# require File.join("lib", "starling", "server")
 
 task :default => :spec
 
