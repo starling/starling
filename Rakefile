@@ -6,12 +6,12 @@ begin
   
   Jeweler::Tasks.new do |s|
     s.name = "starling"
-    s.version = "0.10.0"
+    s.version = "0.10.1"
     s.authors = ["Blaine Cook", "Chris Wanstrath", "Britt Selvitelle", "Glenn Rempe", "Abdul-Rahman Advany", "Seth Fitzsimmons", "Harm Aarts", "Chris Gaffney"]
     s.email = ["blaine@twitter.com", "chris@ozmm.org", "abdulrahman@advany.com", "starlingmq@groups.google.com", "harmaarts@gmail.com", "gaffneyc@gmail.com"]
     s.homepage = "http://github.com/starling/starling/"
     s.summary = "Starling is a lightweight, transactional, distributed queue server"
-    s.description = s.summary
+    s.description = "Starling is a light-weight, persistent queue server that speaks the memcached protocol. It was originally developed for Twitter's backend."
     
     s.executables = ["starling", "starling_top"]
     s.require_paths = ["lib"]

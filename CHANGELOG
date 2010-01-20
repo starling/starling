@@ -1,4 +1,4 @@
-== 0.10.1 (future)
+== 0.10.1
 * Fixed a potential privilege escalation issue <jdamato@alumni.cmu.edu>
 
 == 0.10.0
