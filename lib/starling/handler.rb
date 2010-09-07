@@ -24,7 +24,7 @@ module StarlingServer
     SET_CLIENT_DATA_ERROR = "CLIENT_ERROR bad data chunk\r\nERROR\r\n".freeze
     
     # DELETE Responses
-    DELETE_COMMAND = /\Adelete (.{1,250}) ([0-9]+)\r\n/m
+    DELETE_COMMAND = /\Adelete (.{1,250})(?: ([0-9]+))?\r\n/m
     DELETE_RESPONSE = "END\r\n".freeze
 
     # STAT Response
