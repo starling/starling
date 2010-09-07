@@ -27,6 +27,7 @@ module StarlingServer
       @queue_init_mutexes = {}
 
       @stats = Hash.new(0)
+      initialize_existing_queues!
     end
 
     ##
@@ -139,6 +140,13 @@ module StarlingServer
     end
 
     private
+
+    def initialize_existing_queues!
+      Dir.glob(File.join(@path, "*")).each {|file|
+        next if File.directory?( file )
+        queues(File.basename(file))
+      }
+    end
 
     def current_size #:nodoc:
       @queues.inject(0) { |m, (k,v)| m + v.length }
