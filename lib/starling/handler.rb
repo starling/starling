@@ -25,7 +25,8 @@ module StarlingServer
     
     # DELETE Responses
     DELETE_COMMAND = /\Adelete (.{1,250})(?: ([0-9]+))?\r\n/m
-    DELETE_RESPONSE = "END\r\n".freeze
+    DELETE_RESPONSE = "DELETED\r\n".freeze
+    DELETE_FAILED = "NOT_FOUND\r\n".freeze
 
     # STAT Response
     STATS_COMMAND = /\Astats\r\n/m
@@ -147,8 +148,11 @@ STAT queue_%s_age %d\r\n".freeze
   private
   
     def delete(queue)
-      @queue_collection.delete(queue)
-      respond DELETE_RESPONSE
+      if @queue_collection.delete(queue)
+        respond DELETE_RESPONSE
+      else
+        respond DELETE_FAILED
+      end
     end
   
     def respond(str, *args)

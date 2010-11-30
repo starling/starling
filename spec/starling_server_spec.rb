@@ -69,7 +69,7 @@ describe "StarlingServer" do
   end
   
   it "should respond to delete" do
-    @client.delete("my_queue").should eql("END\r\n")   
+    @client.delete("my_queue").should eql("NOT_FOUND\r\n")   
     starling_client = Starling.new('127.0.0.1:22133')
     starling_client.set('my_queue', 50)
     starling_client.available_queues.size.should eql(1)
