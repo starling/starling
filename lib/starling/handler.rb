@@ -27,6 +27,9 @@ module StarlingServer
     DELETE_COMMAND = /\Adelete (.{1,250})(?: ([0-9]+))?\r\n/m
     DELETE_RESPONSE = "DELETED\r\n".freeze
     DELETE_FAILED = "NOT_FOUND\r\n".freeze
+    
+    FLUSH_ALL_COMMAND = /\Aflush_all( \d+)?\r\n/m
+    FLUSH_ALL_RESPONSE = "OK\r\n".freeze
 
     # STAT Response
     STATS_COMMAND = /\Astats\r\n/m
@@ -131,6 +134,8 @@ STAT queue_%s_age %d\r\n".freeze
       when QUIT_COMMAND
         # ignore the command, client is closing connection.
         return nil
+      when FLUSH_ALL_COMMAND
+        flush_all
       else
         logger.warn "Unknown command: #{data}."
         respond ERR_UNKNOWN_COMMAND
@@ -153,6 +158,10 @@ STAT queue_%s_age %d\r\n".freeze
       else
         respond DELETE_FAILED
       end
+    end
+    
+    def flush_all
+      respond FLUSH_ALL_RESPONSE
     end
   
     def respond(str, *args)
