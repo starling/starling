@@ -100,9 +100,8 @@ STAT queue_%s_age %d\r\n".freeze
 
       while data = @data.slice!(/.*?\r\n/m)
         response = process(data)
+        send_data response if response
       end
-
-      send_data response if response
     end
 
     def process(data)
