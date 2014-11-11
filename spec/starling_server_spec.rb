@@ -1,31 +1,4 @@
-$:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
-
-require 'rubygems'
-require 'fileutils'
-require 'memcache'
-require 'digest/md5'
-require 'starling'
-
-require 'starling/server'
-
-class StarlingServer::PersistentQueue
-  remove_const :SOFT_LOG_MAX_SIZE
-  SOFT_LOG_MAX_SIZE = 16 * 1024 # 16 KB
-end
-
-def safely_fork(&block)
-  # anti-race juice:
-  blocking = true
-  Signal.trap("USR1") { blocking = false }
-
-  pid = Process.fork(&block)
-
-  while blocking
-    sleep 0.1
-  end
-
-  pid
-end
+require 'spec_helper'
 
 def start_server
   @server_pid = safely_fork do
@@ -145,6 +118,27 @@ describe "StarlingServer" do
     expect(Dir.glob("#{log_rotation_path}*").size).to eql(1)
   end
 
+  it "should push messages to the backing queue" do
+    backing_queue_files_glob = File.join(@tmp_path, 'disk_backed_queue', 'test_backing_queue', '*')
+
+    expect(@client.get('test_backing_queue')).to be_nil
+
+    31.times do |i|
+      @client.set('test_backing_queue', i)
+    end
+
+    stats = @client.stats['127.0.0.1:22133']
+    expect(stats["queue_test_backing_queue_primaryitems"]).to eq 10
+    expect(stats["queue_test_backing_queue_backingitems"]).to eq 21
+
+
+    31.times do |i|
+      expect(@client.get('test_backing_queue')).to eq i
+    end
+
+    expect(@client.get('test_backing_queue')).to be_nil
+  end
+
   it "should output statistics per server" do
     stats = @client.stats
     stats.kind_of? Hash
@@ -234,6 +228,6 @@ describe "StarlingServer" do
 
   after do
     stop_server
-    FileUtils.rm(Dir.glob(File.join(@tmp_path, '*')))
+    FileUtils.rm_r(@tmp_path)
   end
 end
