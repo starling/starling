@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    starling (0.10.1)
+    starling (0.20.1)
       eventmachine (~> 1.0.3)
       memcache-client (~> 1.7.0)
 
