@@ -27,6 +27,29 @@ def safely_fork(&block)
   pid
 end
 
+def start_server
+  @server_pid = safely_fork do
+    server = StarlingServer::Base.new(:host => '127.0.0.1',
+                                      :port => 22133,
+                                      :path => @tmp_path,
+                                      :logger => Logger.new(STDERR),
+                                      :log_level => Logger::FATAL)
+    Signal.trap("INT") {
+      server.stop
+      exit
+    }
+
+    Process.kill("USR1", Process.ppid)
+    server.run
+  end
+end
+
+def stop_server
+  Process.kill("INT", @server_pid)
+  Process.wait(@server_pid)
+  @client.reset
+end
+
 describe "StarlingServer" do
   before do
     @tmp_path = File.join(File.dirname(__FILE__), "tmp")
@@ -36,20 +59,7 @@ describe "StarlingServer" do
     rescue Errno::EEXIST
     end
 
-    @server_pid = safely_fork do
-      server = StarlingServer::Base.new(:host => '127.0.0.1',
-                                        :port => 22133,
-                                        :path => @tmp_path,
-                                        :logger => Logger.new(STDERR),
-                                        :log_level => Logger::FATAL)
-      Signal.trap("INT") {
-        server.stop
-        exit
-      }
-
-      Process.kill("USR1", Process.ppid)
-      server.run
-    end
+    start_server
 
     @client = MemCache.new('127.0.0.1:22133')
 
@@ -66,6 +76,19 @@ describe "StarlingServer" do
     expect(@client.get('test_set_and_get_one_entry')).to be_nil
     @client.set('test_set_and_get_one_entry', v)
     expect(@client.get('test_set_and_get_one_entry')).to eql(v)
+  end
+
+  it "should list queues at startup" do
+    @client.set("example_queue", "hello")
+    stop_server
+    start_server
+
+    stats = @client.stats
+    expect(stats.has_key?('127.0.0.1:22133')).to be_truthy
+    server_stats = stats['127.0.0.1:22133']
+
+    expect(server_stats.keys.grep( /queue_.*_total_items/ ).size).to eql(1)
+    expect(server_stats["queue_example_queue_total_items"]).to eql(1)
   end
 
   it "should respond to delete" do
@@ -210,9 +233,7 @@ describe "StarlingServer" do
   end
 
   after do
-    Process.kill("INT", @server_pid)
-    Process.wait(@server_pid)
-    @client.reset
+    stop_server
     FileUtils.rm(Dir.glob(File.join(@tmp_path, '*')))
   end
 end
