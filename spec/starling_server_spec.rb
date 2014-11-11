@@ -56,46 +56,46 @@ describe "StarlingServer" do
   end
 
   it "should test if temp_path exists and is writeable" do
-    File.exist?(@tmp_path).should be_true
-    File.directory?(@tmp_path).should be_true
-    File.writable?(@tmp_path).should be_true
+    expect(File.exist?(@tmp_path)).to be_truthy
+    expect(File.directory?(@tmp_path)).to be_truthy
+    expect(File.writable?(@tmp_path)).to be_truthy
   end
 
   it "should set and get" do
     v = rand((2**32)-1)
-    @client.get('test_set_and_get_one_entry').should be_nil
+    expect(@client.get('test_set_and_get_one_entry')).to be_nil
     @client.set('test_set_and_get_one_entry', v)
-    @client.get('test_set_and_get_one_entry').should eql(v)
+    expect(@client.get('test_set_and_get_one_entry')).to eql(v)
   end
 
   it "should respond to delete" do
-    @client.delete("my_queue").should eql("NOT_FOUND\r\n")
+    expect(@client.delete("my_queue")).to eql("NOT_FOUND\r\n")
     starling_client = Starling.new('127.0.0.1:22133')
     starling_client.set('my_queue', 50)
-    starling_client.available_queues.size.should eql(1)
+    expect(starling_client.available_queues.size).to eql(1)
     starling_client.delete("my_queue")
-    starling_client.available_queues.size.should eql(0)
+    expect(starling_client.available_queues.size).to eql(0)
   end
 
   it "should expire entries" do
     v = rand((2**32)-1)
-    @client.get('test_set_with_expiry').should be_nil
+    expect(@client.get('test_set_with_expiry')).to be_nil
     now = Time.now.to_i
     @client.set('test_set_with_expiry', v + 2, now)
     @client.set('test_set_with_expiry', v)
     sleep(1.0)
-    @client.get('test_set_with_expiry').should eql(v)
+    expect(@client.get('test_set_with_expiry')).to eql(v)
   end
 
   it "should have age stat" do
     now = Time.now.to_i
     @client.set('test_age', 'nibbler')
     sleep(1.0)
-    @client.get('test_age').should eql('nibbler')
+    expect(@client.get('test_age')).to eql('nibbler')
 
     stats = @client.stats['127.0.0.1:22133']
-    stats.has_key?('queue_test_age_age').should be_true
-    (stats['queue_test_age_age'] >= 1000).should be_true
+    expect(stats.has_key?('queue_test_age_age')).to be_truthy
+    expect(stats['queue_test_age_age'] >= 1000).to be_truthy
   end
 
   it "should rotate log" do
@@ -104,28 +104,28 @@ describe "StarlingServer" do
     Dir.glob("#{log_rotation_path}*").each do |file|
       File.unlink(file) rescue nil
     end
-    @client.get('test_log_rotation').should be_nil
+    expect(@client.get('test_log_rotation')).to be_nil
 
     v = 'x' * 8192
 
     @client.set('test_log_rotation', v)
-    File.size(log_rotation_path).should eql(8213)
+    expect(File.size(log_rotation_path)).to eql(8213)
     @client.get('test_log_rotation')
 
-    @client.get('test_log_rotation').should be_nil
+    expect(@client.get('test_log_rotation')).to be_nil
 
     @client.set('test_log_rotation', v)
-    @client.get('test_log_rotation').should eql(v)
+    expect(@client.get('test_log_rotation')).to eql(v)
 
-    File.size(log_rotation_path).should eql(1)
+    expect(File.size(log_rotation_path)).to eql(1)
     # rotated log should be erased after a successful roll.
-    Dir.glob("#{log_rotation_path}*").size.should eql(1)
+    expect(Dir.glob("#{log_rotation_path}*").size).to eql(1)
   end
 
   it "should output statistics per server" do
     stats = @client.stats
     stats.kind_of? Hash
-    stats.has_key?('127.0.0.1:22133').should be_true
+    expect(stats.has_key?('127.0.0.1:22133')).to be_truthy
 
     server_stats = stats['127.0.0.1:22133']
 
@@ -135,22 +135,22 @@ describe "StarlingServer" do
                       rusage_system rusage_user bytes_read )
 
     basic_stats.each do |stat|
-      server_stats.has_key?(stat).should be_true
+      expect(server_stats.has_key?(stat)).to be_truthy
     end
   end
 
   it "should return valid response with unkown command" do
     #why is this an unknown command?
-    lambda {
+    expect {
       response = @client.add('blah', 1)
-    }.should raise_error(MemCache::MemCacheError)
+    }.to raise_error(MemCache::MemCacheError)
   end
 
   it "should disconnect and reconnect again" do
     v = rand(2**32-1)
     @client.set('test_that_disconnecting_and_reconnecting_works', v)
     @client.reset
-    @client.get('test_that_disconnecting_and_reconnecting_works').should eql(v)
+    expect(@client.get('test_that_disconnecting_and_reconnecting_works')).to eql(v)
   end
 
   it "should use epoll on linux" do
@@ -191,7 +191,7 @@ describe "StarlingServer" do
 
     begin
       client = MemCache.new('127.0.0.1:22133')
-      client.get('test_epoll').should eql(v)
+      expect(client.get('test_epoll')).to eql(v)
     ensure
       Process.kill("TERM", pid1)
       Process.kill("TERM", pid2)
@@ -204,9 +204,9 @@ describe "StarlingServer" do
       invalid_path = File.join('/', Digest::MD5.hexdigest(rand(2**32-1).to_s)[0,8])
     end
 
-    lambda {
+    expect {
       StarlingServer::QueueCollection.new(invalid_path)
-    }.should raise_error(StarlingServer::InaccessibleQueuePath)
+    }.to raise_error(StarlingServer::InaccessibleQueuePath)
   end
 
   after do
