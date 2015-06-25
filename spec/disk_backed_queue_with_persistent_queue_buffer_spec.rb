@@ -1,4 +1,4 @@
-require File.expand_path('../spec_helper', __FILE__)
+require 'spec_helper'
 
 class FakeBackingQueue < Array
   def consume_log_into(other)
@@ -21,16 +21,18 @@ describe "StarlingServer::DiskBackedQueueWithPersistentQueueBuffer" do
     MAX_PRIMARY_SIZE.times do
       @queue.push "hello"
     end
-    @primary_queue.length.should == MAX_PRIMARY_SIZE
-    @backing_queue.should be_empty
+
+    expect(@primary_queue.length).to eq MAX_PRIMARY_SIZE
+    expect(@backing_queue).to be_empty
   end
 
   it "should refer the #{MAX_PRIMARY_SIZE+1}th message to the backing queue" do
     (MAX_PRIMARY_SIZE+1).times do
       @queue.push "hello"
     end
-    @primary_queue.length.should == MAX_PRIMARY_SIZE
-    @backing_queue.length.should == 1
+
+    expect(@primary_queue.length).to eq MAX_PRIMARY_SIZE
+    expect(@backing_queue.length).to eq 1
   end
 
   it "should pop messages off the primary first" do
@@ -40,8 +42,8 @@ describe "StarlingServer::DiskBackedQueueWithPersistentQueueBuffer" do
 
     @queue.pop
 
-    @primary_queue.length.should == MAX_PRIMARY_SIZE - 1
-    @backing_queue.length.should == 1
+    expect(@primary_queue.length).to eq(MAX_PRIMARY_SIZE - 1)
+    expect(@backing_queue.length).to eq 1
   end
 
   it "should pop messages off the backing queue once the primary is empty" do
@@ -51,17 +53,17 @@ describe "StarlingServer::DiskBackedQueueWithPersistentQueueBuffer" do
 
     MAX_PRIMARY_SIZE.times{ @queue.pop }
 
-    @primary_queue.should be_empty
-    @backing_queue.should_not be_empty
+    expect(@primary_queue).to be_empty
+    expect(@backing_queue).to_not be_empty
 
-    @queue.pop.should == "hello"
-    @queue.empty?
+    expect(@queue.pop).to eq "hello"
+    expect(@queue).to be_empty
   end
 
   it "should total both the lengths" do
     (MAX_PRIMARY_SIZE+1).times do
       @queue.push "hello"
     end
-    @queue.length.should == MAX_PRIMARY_SIZE+1
+    expect(@queue.length).to eq MAX_PRIMARY_SIZE+1
   end
 end

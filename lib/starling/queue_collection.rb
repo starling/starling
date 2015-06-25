@@ -63,7 +63,7 @@ module StarlingServer
     
     def delete(key)
       queue = @queues.delete(key)
-      return if queue.nil?
+      return false if queue.nil?
       queue.purge
     end
 

@@ -1,4 +1,4 @@
-require File.expand_path('../spec_helper', __FILE__)
+require 'spec_helper'
 
 def start_server
   @server_pid = safely_fork do
@@ -39,16 +39,16 @@ describe "StarlingServer" do
   end
 
   it "should test if temp_path exists and is writeable" do
-    File.exist?(@tmp_path).should be_true
-    File.directory?(@tmp_path).should be_true
-    File.writable?(@tmp_path).should be_true
+    expect(File.exist?(@tmp_path)).to be_truthy
+    expect(File.directory?(@tmp_path)).to be_truthy
+    expect(File.writable?(@tmp_path)).to be_truthy
   end
 
   it "should set and get" do
     v = rand((2**32)-1)
-    @client.get('test_set_and_get_one_entry').should be_nil
+    expect(@client.get('test_set_and_get_one_entry')).to be_nil
     @client.set('test_set_and_get_one_entry', v)
-    @client.get('test_set_and_get_one_entry').should eql(v)
+    expect(@client.get('test_set_and_get_one_entry')).to eql(v)
   end
 
   it "should list queues at startup" do
@@ -57,41 +57,41 @@ describe "StarlingServer" do
     start_server
 
     stats = @client.stats
-    stats.has_key?('127.0.0.1:22133').should be_true
+    expect(stats.has_key?('127.0.0.1:22133')).to be_truthy
     server_stats = stats['127.0.0.1:22133']
 
-    server_stats.keys.grep( /queue_.*_total_items/ ).size.should eql(1)
-    server_stats["queue_example_queue_total_items"].should eql(1)
+    expect(server_stats.keys.grep( /queue_.*_total_items/ ).size).to eql(1)
+    expect(server_stats["queue_example_queue_total_items"]).to eql(1)
   end
 
   it "should respond to delete" do
-    @client.delete("my_queue").should eql("END\r\n")
+    expect(@client.delete("my_queue")).to eql("NOT_FOUND\r\n")
     starling_client = Starling.new('127.0.0.1:22133')
     starling_client.set('my_queue', 50)
-    starling_client.available_queues.size.should eql(1)
+    expect(starling_client.available_queues.size).to eql(1)
     starling_client.delete("my_queue")
-    starling_client.available_queues.size.should eql(0)
+    expect(starling_client.available_queues.size).to eql(0)
   end
 
   it "should expire entries" do
     v = rand((2**32)-1)
-    @client.get('test_set_with_expiry').should be_nil
+    expect(@client.get('test_set_with_expiry')).to be_nil
     now = Time.now.to_i
     @client.set('test_set_with_expiry', v + 2, now)
     @client.set('test_set_with_expiry', v)
     sleep(1.0)
-    @client.get('test_set_with_expiry').should eql(v)
+    expect(@client.get('test_set_with_expiry')).to eql(v)
   end
 
   it "should have age stat" do
     now = Time.now.to_i
     @client.set('test_age', 'nibbler')
     sleep(1.0)
-    @client.get('test_age').should eql('nibbler')
+    expect(@client.get('test_age')).to eql('nibbler')
 
     stats = @client.stats['127.0.0.1:22133']
-    stats.has_key?('queue_test_age_age').should be_true
-    (stats['queue_test_age_age'] >= 1000).should be_true
+    expect(stats.has_key?('queue_test_age_age')).to be_truthy
+    expect(stats['queue_test_age_age'] >= 1000).to be_truthy
   end
 
   it "should rotate log" do
@@ -100,49 +100,49 @@ describe "StarlingServer" do
     Dir.glob("#{log_rotation_path}*").each do |file|
       File.unlink(file) rescue nil
     end
-    @client.get('test_log_rotation').should be_nil
+    expect(@client.get('test_log_rotation')).to be_nil
 
     v = 'x' * 8192
 
     @client.set('test_log_rotation', v)
-    File.size(log_rotation_path).should eql(8207)
+    expect(File.size(log_rotation_path)).to eql(8213)
     @client.get('test_log_rotation')
 
-    @client.get('test_log_rotation').should be_nil
+    expect(@client.get('test_log_rotation')).to be_nil
 
     @client.set('test_log_rotation', v)
-    @client.get('test_log_rotation').should eql(v)
+    expect(@client.get('test_log_rotation')).to eql(v)
 
-    File.size(log_rotation_path).should eql(1)
+    expect(File.size(log_rotation_path)).to eql(1)
     # rotated log should be erased after a successful roll.
-    Dir.glob("#{log_rotation_path}*").size.should eql(1)
+    expect(Dir.glob("#{log_rotation_path}*").size).to eql(1)
   end
 
   it "should push messages to the backing queue" do
     backing_queue_files_glob = File.join(@tmp_path, 'disk_backed_queue', 'test_backing_queue', '*')
 
-    @client.get('test_backing_queue').should be_nil
+    expect(@client.get('test_backing_queue')).to be_nil
 
     31.times do |i|
       @client.set('test_backing_queue', i)
     end
 
     stats = @client.stats['127.0.0.1:22133']
-    stats["queue_test_backing_queue_primaryitems"].should == 10
-    stats["queue_test_backing_queue_backingitems"].should == 21
+    expect(stats["queue_test_backing_queue_primaryitems"]).to eq 10
+    expect(stats["queue_test_backing_queue_backingitems"]).to eq 21
 
 
     31.times do |i|
-      @client.get('test_backing_queue').should == i
+      expect(@client.get('test_backing_queue')).to eq i
     end
 
-    @client.get('test_backing_queue').should be_nil
+    expect(@client.get('test_backing_queue')).to be_nil
   end
 
   it "should output statistics per server" do
     stats = @client.stats
     stats.kind_of? Hash
-    stats.has_key?('127.0.0.1:22133').should be_true
+    expect(stats.has_key?('127.0.0.1:22133')).to be_truthy
 
     server_stats = stats['127.0.0.1:22133']
 
@@ -152,22 +152,22 @@ describe "StarlingServer" do
                       rusage_system rusage_user bytes_read )
 
     basic_stats.each do |stat|
-      server_stats.has_key?(stat).should be_true
+      expect(server_stats.has_key?(stat)).to be_truthy
     end
   end
 
   it "should return valid response with unkown command" do
     #why is this an unknown command?
-    lambda {
+    expect {
       response = @client.add('blah', 1)
-    }.should raise_error(MemCache::MemCacheError)
+    }.to raise_error(MemCache::MemCacheError)
   end
 
   it "should disconnect and reconnect again" do
     v = rand(2**32-1)
     @client.set('test_that_disconnecting_and_reconnecting_works', v)
     @client.reset
-    @client.get('test_that_disconnecting_and_reconnecting_works').should eql(v)
+    expect(@client.get('test_that_disconnecting_and_reconnecting_works')).to eql(v)
   end
 
   it "should use epoll on linux" do
@@ -176,12 +176,12 @@ describe "StarlingServer" do
     # handle more than 1024 connections.
 
     unless IO::popen("uname").read.chomp == "Linux"
-      pending "skipping epoll test: not on Linux"
+      skip "skipping epoll test: not on Linux"
     end
 
     fd_limit = IO::popen("bash -c 'ulimit -n'").read.chomp.to_i
     unless fd_limit > 1024
-      pending "skipping epoll test: 'ulimit -n' = #{fd_limit}, need > 1024"
+      skip "skipping epoll test: 'ulimit -n' = #{fd_limit}, need > 1024"
     end
 
     v = rand(2**32 - 1)
@@ -208,7 +208,7 @@ describe "StarlingServer" do
 
     begin
       client = MemCache.new('127.0.0.1:22133')
-      client.get('test_epoll').should eql(v)
+      expect(client.get('test_epoll')).to eql(v)
     ensure
       Process.kill("TERM", pid1)
       Process.kill("TERM", pid2)
@@ -221,9 +221,9 @@ describe "StarlingServer" do
       invalid_path = File.join('/', Digest::MD5.hexdigest(rand(2**32-1).to_s)[0,8])
     end
 
-    lambda {
+    expect {
       StarlingServer::QueueCollection.new(invalid_path)
-    }.should raise_error(StarlingServer::InaccessibleQueuePath)
+    }.to raise_error(StarlingServer::InaccessibleQueuePath)
   end
 
   after do
