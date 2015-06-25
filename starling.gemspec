@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
 
   spec.rdoc_options = ["--quiet", "--title", "starling documentation", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source"]
   spec.add_dependency "memcache-client", '~> 1.7.0'
-  spec.add_dependency "eventmachine", "~> 1.0.3"
+  spec.add_dependency "eventmachine", "~> 1.0.4"
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
