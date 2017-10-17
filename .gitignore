@@ -4,4 +4,4 @@ tmp/*
 
 .*.swp
 .DS_Store
-Gemfile.lock
+tests.xml

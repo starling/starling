@@ -1,9 +1,8 @@
 PATH
   remote: .
   specs:
-    starling (0.20.2)
+    starling (0.20.3)
       eventmachine (~> 1.2.5)
-      memcache-client (~> 1.7.0)
 
 GEM
   remote: https://rubygems.org/
@@ -25,14 +24,18 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.6.0)
     rspec-support (3.6.0)
+    rspec_junit_formatter (0.3.0)
+      rspec-core (>= 2, < 4, != 2.12.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   bundler (~> 1.6)
+  memcache-client (~> 1.7.0)
   rake
   rspec (~> 3)
+  rspec_junit_formatter
   starling!
 
 BUNDLED WITH
