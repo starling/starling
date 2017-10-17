@@ -4,3 +4,4 @@ tmp/*
 
 .*.swp
 .DS_Store
+tests.xml
