@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "starling"
-  spec.version       = "0.20.2"
+  spec.version       = "0.20.3"
   spec.authors       = ["Blaine Cook", "Chris Wanstrath", "Britt Selvitelle", "Glenn Rempe", "Abdul-Rahman Advany", "Seth Fitzsimmons", "Harm Aarts", "Chris Gaffney"]
   spec.description   = %q{Starling is a light-weight, persistent queue server that speaks the memcached protocol. It was originally developed for Twitter's backend.}
   spec.summary       = %q{Starling is a lightweight, transactional, distributed queue server}
