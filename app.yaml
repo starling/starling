@@ -8,3 +8,11 @@ pipeline:
     spec:
       script: rake spec
       workdir: /usr/src
+    outdated:
+      script: bundle outdated
+      workdir: /usr/src
+    audit:
+      script: |
+        bundle exec bundle-audit check --update
+        bundle exec ruby-audit check
+      workdir: /usr/src
