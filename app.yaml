@@ -1,0 +1,10 @@
+name: starling
+
+image:
+  repository: quay.io/reevoo/starling
+
+pipeline:
+  tests:
+    spec:
+      script: rake spec
+      workdir: /usr/src
