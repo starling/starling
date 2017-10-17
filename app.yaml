@@ -7,3 +7,7 @@ pipeline:
   tests:
     spec:
       script: rake spec
+    audit:
+      script: |
+        bundle exec bundle-audit check --update
+        bundle exec ruby-audit check

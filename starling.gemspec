@@ -16,9 +16,10 @@ Gem::Specification.new do |spec|
   spec.rdoc_options = ["--quiet", "--title", "starling documentation", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source"]
   spec.add_dependency "eventmachine", "~> 1.2.5"
 
-  spec.add_development_dependency "memcache-client", '~> 1.7.0'
+  spec.add_development_dependency "memcache-client", '~> 1.8.0'
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", "~> 3"
   spec.add_development_dependency "rspec_junit_formatter"
+  spec.add_development_dependency "ruby_audit"
 end
