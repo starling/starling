@@ -1,7 +1,10 @@
+require 'thread'
+
 module StarlingServer
   class DiskBackedQueue
     MAX_LOGFILE_SIZE = 10_000
     LOGGED_MESSAGE_HEADER_LENGTH = [1].pack("I").size
+    QUEUE_MUTEX = Mutex.new
 
     attr_reader :total_items
 
@@ -35,7 +38,7 @@ module StarlingServer
     end
 
     def push(data)
-      Thread.exclusive do
+      QUEUE_MUTEX.synchronize do
         rotate! if @active_log_file_size >= MAX_LOGFILE_SIZE
         @active_log_file << [data.size].pack("I") + data
         @active_log_file.flush
@@ -45,7 +48,7 @@ module StarlingServer
     end
 
     def consume_log_into(queue)
-      Thread.exclusive do
+      QUEUE_MUTEX.synchronize do
         return unless file = first_log_file
         return if @active_log_file_name == file and @active_log_file_size.zero?
 
