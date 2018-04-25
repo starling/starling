@@ -14,7 +14,7 @@ module StarlingServer
     def self.run
       new
     end
-    
+
     def self.shutdown
       @@instance.shutdown
     end
@@ -69,7 +69,7 @@ module StarlingServer
     end
 
     def parse_options
-      self.options = { :host => '127.0.0.1',
+      self.options = { :host => '0.0.0.0',
                        :port => 22122,
                        :path => File.join('', 'var', 'spool', 'starling'),
                        :log_level => Logger::INFO,
